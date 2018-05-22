@@ -40,7 +40,18 @@ namespace VuePageCodeGenerator
         /// CodeGeneratorCommandPackage GUID string.
         /// </summary>
         public const string PackageGuidString = "596da205-8c21-4c98-b4d7-df3f4541456c";
+        private static DTE2 _dte;
 
+        internal static DTE2 DTE
+        {
+            get
+            {
+                if (_dte == null)
+                    _dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;
+
+                return _dte;
+            }
+        }
         /// <summary>
         /// Initializes a new instance of the <see cref="CodeGeneratorCommand"/> class.
         /// </summary>
