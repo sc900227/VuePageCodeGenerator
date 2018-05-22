@@ -119,6 +119,7 @@ namespace VuePageCodeGenerator
             string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
             string title = "CodeGeneratorCommand";
 
+
             // Show a message box to prove we were here
             VsShellUtilities.ShowMessageBox(
                 this.ServiceProvider,
