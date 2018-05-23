@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using EnvDTE;
 using EnvDTE80;
+using Microsoft.CSharp;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VuePageCodeGenerator.AssemblyHelper;
@@ -129,19 +130,21 @@ namespace VuePageCodeGenerator
             {
                 string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
                 string title = "CodeGeneratorCommand";
-                IEnumerable<ProjectItem> projects = GetSelectedProject();
-                
-                ProjectItem project = projects.FirstOrDefault();
-                var pro=project.ContainingProject.ProjectItems;
-                List<string> names = new List<string>();
-                foreach (MethodInfo met in pro.Item(1).GetType().GetMethods())
-                {
-                    names.Add(met.Name);
-                }
+                //IEnumerable<ProjectItem> projects = GetSelectedProject();
+                //ProjectItem project = projects.FirstOrDefault();
+                //var pro=project.ContainingProject.ProjectItems;
+                Project project = getActiveProject();
+                Assembly assembly = Assembly.LoadFrom(project.Object.ToString());
+                //List<string> names = new List<string>();
+                //foreach (var item in project)
+                //{
+                //    names.Add(item.);
+                //}
+
 
                 #region Test
-                string strCS = @"D:\Repos\MyGeneDocument\MyDocumentManageNetCore.Domain\bin\Debug\netcoreapp2.0\MyDocumentManageNetCore.Domain.dll";
-                string strDll = strCS.Substring(0, strCS.LastIndexOf(".")) + ".dll";
+                //string strCS = @"G:\mywork\MyDocumentManage\MyDocumentManage\MyDocumentManageNetCore.Domain\bin\Debug\netcoreapp2.0\MyDocumentManageNetCore.Domain.dll";
+                //string strDll = strCS.Substring(0, strCS.LastIndexOf(".")) + ".dll";
 
                 //CodeDomProvider COD = new Microsoft.CSharp.CSharpCodeProvider();
                 //COD = new Microsoft.CSharp.CSharpCodeProvider();
@@ -152,9 +155,10 @@ namespace VuePageCodeGenerator
                 ////把ＣＳ文件生成ＤＬＬ
                 //CompilerResults COMR = COD.CompileAssemblyFromFile(COM, strCS);
 
-                //下面我们就可以根据生成的Dll反射为相关对象，供我们使用了．
-                AssemblyHandler assembly = new AssemblyHandler(strCS);
-                AssemblyResult result=assembly.GetClassInfo("Entitys.TB_GeneInfo");
+                ////下面我们就可以根据生成的Dll反射为相关对象，供我们使用了．
+                //AssemblyHandler assembly = new AssemblyHandler(strCS);
+                //AssemblyResult result=assembly.GetClassInfo("Entitys.TB_GeneInfo");
+                //Assembly a = Assembly.LoadFrom(strCS);
                 //Type t = a.GetType("b");
                 //object obj = Activator.CreateInstance(t);
                 //t.GetMethod("run").Invoke(obj, null);
@@ -200,7 +204,29 @@ namespace VuePageCodeGenerator
             
         }
 
-        
+        /// <summary>
+        /// Gets the Active project
+        /// </summary>
+        /// <returns></returns>
+        public Project getActiveProject()
+        {
+            Array projects = (Array)CodeGeneratorCommandPackage.DTE.ActiveSolutionProjects;
+            if (projects != null && projects.Length > 0)
+            {
+                return projects.GetValue(0) as Project;
+            }
+            projects = (Array)CodeGeneratorCommandPackage.DTE.Solution.SolutionBuild.StartupProjects;
+            if (projects != null && projects.Length >= 1)
+            {
+                return projects.GetValue(0) as Project;
+            }
+            projects = (Array)CodeGeneratorCommandPackage.DTE.Solution.Projects;
+            if (projects != null && projects.Length > 0)
+            {
+                return projects.GetValue(0) as Project;
+            }
+            return null;
+        }
         public static IEnumerable<ProjectItem> GetSelectedProject(DTE2 dte = null)
         {
             var items = (Array)CodeGeneratorCommandPackage.DTE.ToolWindows.SolutionExplorer.SelectedItems;
