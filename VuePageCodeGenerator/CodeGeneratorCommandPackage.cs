@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
@@ -34,6 +36,7 @@ namespace VuePageCodeGenerator
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(CodeGeneratorCommandPackage.PackageGuidString)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
+    [ProvideToolWindow(typeof(ProjectPropertiesToolWindow))]
     public sealed class CodeGeneratorCommandPackage : Package
     {
         /// <summary>
@@ -73,6 +76,7 @@ namespace VuePageCodeGenerator
         {
             CodeGeneratorCommand.Initialize(this);
             base.Initialize();
+            ProjectPropertiesToolWindowCommand.Initialize(this);
         }
 
         #endregion

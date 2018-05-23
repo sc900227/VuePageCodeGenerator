@@ -1,9 +1,18 @@
 ﻿using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using VuePageCodeGenerator.AssemblyHelper;
 
 namespace VuePageCodeGenerator
 {
@@ -116,20 +125,93 @@ namespace VuePageCodeGenerator
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-            string title = "CodeGeneratorCommand";
+            try
+            {
+                string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
+                string title = "CodeGeneratorCommand";
+                IEnumerable<ProjectItem> projects = GetSelectedProject();
+                
+                ProjectItem project = projects.FirstOrDefault();
+                var pro=project.ContainingProject.ProjectItems;
+                List<string> names = new List<string>();
+                foreach (MethodInfo met in pro.Item(1).GetType().GetMethods())
+                {
+                    names.Add(met.Name);
+                }
 
+                #region Test
+                string strCS = @"D:\Repos\MyGeneDocument\MyDocumentManageNetCore.Domain\bin\Debug\netcoreapp2.0\MyDocumentManageNetCore.Domain.dll";
+                string strDll = strCS.Substring(0, strCS.LastIndexOf(".")) + ".dll";
 
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                this.ServiceProvider,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+                //CodeDomProvider COD = new Microsoft.CSharp.CSharpCodeProvider();
+                //COD = new Microsoft.CSharp.CSharpCodeProvider();
+                //CompilerParameters COM = new CompilerParameters();
+                ////生成DLL，True为生成exe文件,false为生成ＤＬＬ文件
+                //COM.GenerateExecutable = false;
+                //COM.OutputAssembly = strDll;
+                ////把ＣＳ文件生成ＤＬＬ
+                //CompilerResults COMR = COD.CompileAssemblyFromFile(COM, strCS);
+
+                //下面我们就可以根据生成的Dll反射为相关对象，供我们使用了．
+                AssemblyHandler assembly = new AssemblyHandler(strCS);
+                AssemblyResult result=assembly.GetClassInfo("Entitys.TB_GeneInfo");
+                //Type t = a.GetType("b");
+                //object obj = Activator.CreateInstance(t);
+                //t.GetMethod("run").Invoke(obj, null);
+                //CodeSnippetCompileUnit code = new CodeSnippetCompileUnit();
+
+                //Assembly assembly =Assembly.LoadFrom(project.ContainingProject.FullName);
+                //Microsoft.Build.Evaluation.ProjectCollection pro = new Microsoft.Build.Evaluation.ProjectCollection();
+                //var items = pro.LoadProject(project.ContainingProject.FullName);
+                #endregion
+
+                //List<string> names = new List<string>();
+                //if (project.GetType().IsClass)
+                //{
+                //    MethodInfo[] methods=project.GetType().GetMethods();
+                //    foreach (var item in methods)
+                //    {
+                //        names.Add(item.Name);
+                //    }
+                //    Form1 form1 = new Form1(names);
+                //    form1.Show();
+                //}
+                // Show a message box to prove we were here
+                VsShellUtilities.ShowMessageBox(
+                    this.ServiceProvider,
+                    message,
+                    title,
+                    OLEMSGICON.OLEMSGICON_INFO,
+                    OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            }
+            catch (Exception ex)
+            {
+                VsShellUtilities.ShowMessageBox(
+                    this.ServiceProvider,
+                    ex.Message,
+                    "Error",
+                    OLEMSGICON.OLEMSGICON_INFO,
+                    OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+              
+            }
+            
         }
 
+        
+        public static IEnumerable<ProjectItem> GetSelectedProject(DTE2 dte = null)
+        {
+            var items = (Array)CodeGeneratorCommandPackage.DTE.ToolWindows.SolutionExplorer.SelectedItems;
+            
+            foreach (UIHierarchyItem selItem in items)
+            {
+                var item = selItem.Object as ProjectItem;
+
+                if (item != null && item.Properties != null)
+                    yield return item;
+            }
+        }
         //<summary>Gets the full paths to the currently selected item(s) in the Solution Explorer.</summary>
         public static IEnumerable<string> GetSelectedItemPaths(DTE2 dte = null)
         {
@@ -172,8 +254,8 @@ namespace VuePageCodeGenerator
             if (solution == null)
                 return null;
 
-            if (string.IsNullOrEmpty(solution.FullName))
-                return GetRootFolder();
+            //if (string.IsNullOrEmpty(solution.FullName))
+            //    return GetRootFolder();
 
             return Path.GetDirectoryName(solution.FullName);
         }
