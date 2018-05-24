@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="CodeGenerator.mdj" />
     <None Include="Key.snk" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
