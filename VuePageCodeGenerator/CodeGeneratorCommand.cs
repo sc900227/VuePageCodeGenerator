@@ -8,12 +8,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.CSharp;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VuePageCodeGenerator.AssemblyHelper;
+using VuePageCodeGenerator.CSharpCodeHelper;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace VuePageCodeGenerator
 {
@@ -134,7 +138,8 @@ namespace VuePageCodeGenerator
                 //ProjectItem project = projects.FirstOrDefault();
                 //var pro=project.ContainingProject.ProjectItems;
                 Project project = getActiveProject();
-                Assembly assembly = Assembly.LoadFrom(project.Object.ToString());
+                
+
                 //List<string> names = new List<string>();
                 //foreach (var item in project)
                 //{
@@ -143,7 +148,21 @@ namespace VuePageCodeGenerator
 
 
                 #region Test
-                //string strCS = @"G:\mywork\MyDocumentManage\MyDocumentManage\MyDocumentManageNetCore.Domain\bin\Debug\netcoreapp2.0\MyDocumentManageNetCore.Domain.dll";
+                string strFile = @"D:\SPA.PhoneBook-master\SPA.PhoneBook-master\src\aspnet-core\src\SPACore.PhoneBook.Application\PhoneBooks\Persons\PersonAppServices.cs";
+                string strCS = @"D:\SPA.PhoneBook-master\SPA.PhoneBook-master\src\aspnet-core\src\SPACore.PhoneBook.Core\PhoneBooks\Persons\Person.cs";
+                string content = string.Empty;
+                using (FileStream stream = new FileStream(strFile, FileMode.Open,FileAccess.Read))
+                {
+                    StreamReader reader = new StreamReader(stream, Encoding.Default);
+                    content=reader.ReadToEnd();
+                }
+                var syntaxTree = CSharpSyntaxTree.ParseText(@content);
+                var root = syntaxTree.GetRoot();
+                var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
+
+                //CodeSnippetCompileUnit csu = new CodeSnippetCompileUnit(content);
+                //CodeDomProvider provide = new CSharpCodeProvider();
+                //var result=provide.CompileAssemblyFromDom(new CompilerParameters(), csu);
                 //string strDll = strCS.Substring(0, strCS.LastIndexOf(".")) + ".dll";
 
                 //CodeDomProvider COD = new Microsoft.CSharp.CSharpCodeProvider();
@@ -158,7 +177,7 @@ namespace VuePageCodeGenerator
                 ////下面我们就可以根据生成的Dll反射为相关对象，供我们使用了．
                 //AssemblyHandler assembly = new AssemblyHandler(strCS);
                 //AssemblyResult result=assembly.GetClassInfo("Entitys.TB_GeneInfo");
-                //Assembly a = Assembly.LoadFrom(strCS);
+                //Assembly a = Assembly.LoadFrom(strDll);
                 //Type t = a.GetType("b");
                 //object obj = Activator.CreateInstance(t);
                 //t.GetMethod("run").Invoke(obj, null);
@@ -169,17 +188,7 @@ namespace VuePageCodeGenerator
                 //var items = pro.LoadProject(project.ContainingProject.FullName);
                 #endregion
 
-                //List<string> names = new List<string>();
-                //if (project.GetType().IsClass)
-                //{
-                //    MethodInfo[] methods=project.GetType().GetMethods();
-                //    foreach (var item in methods)
-                //    {
-                //        names.Add(item.Name);
-                //    }
-                //    Form1 form1 = new Form1(names);
-                //    form1.Show();
-                //}
+                
                 // Show a message box to prove we were here
 
                 VsShellUtilities.ShowMessageBox(
@@ -203,7 +212,7 @@ namespace VuePageCodeGenerator
             }
             
         }
-
+        
         /// <summary>
         /// Gets the Active project
         /// </summary>
