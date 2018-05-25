@@ -7,15 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VuePageCodeGenerator.CSharpCodeHelper
+namespace PageGenerator.CodeAnalysis
 {
     public class CSharpCodeAnalysis
     {
         private string _strFilePath;
-        public CSharpCodeAnalysis(string strFilePath) {
+        public CSharpCodeAnalysis(string strFilePath)
+        {
             _strFilePath = strFilePath;
         }
-        private string GetContent() {
+        private string GetContent()
+        {
             string content = string.Empty;
             using (FileStream stream = new FileStream(_strFilePath, FileMode.Open, FileAccess.Read))
             {
@@ -24,37 +26,30 @@ namespace VuePageCodeGenerator.CSharpCodeHelper
             }
             return content;
         }
-        public List<CSharpMethod> GetAllCSharpMethods() {
+        public List<CSharpMethod> GetAllCSharpMethods()
+        {
             List<CSharpMethod> cSharpMethods = new List<CSharpMethod>();
-            var methods = GetAllMethods().Where(a=>a.Modifiers.ToString().Contains("public"));
+            var methods = GetAllMethods().Where(a => a.Modifiers.ToString().Contains("public"));
             foreach (var item in methods)
             {
-                cSharpMethods.Add(new CSharpMethod() {
-                     MethodName=item.Identifier.ValueText,
-                     ParameterType=item.ParameterList.Parameters.FirstOrDefault()!=null? item.ParameterList.Parameters.FirstOrDefault().Type.ToString():"",
-                     ParameterName= item.ParameterList.Parameters.FirstOrDefault() != null ? item.ParameterList.Parameters.FirstOrDefault().Identifier.ValueText:"",
-                     ReturnType = GetReturnType(item.ReturnType.ToString())
+                cSharpMethods.Add(new CSharpMethod()
+                {
+                    MethodName = item.Identifier.ValueText,
+                    ParameterType = item.ParameterList.Parameters.FirstOrDefault() != null ? item.ParameterList.Parameters.FirstOrDefault().Type.ToString() : "",
+                    ParameterName = item.ParameterList.Parameters.FirstOrDefault() != null ? item.ParameterList.Parameters.FirstOrDefault().Identifier.ValueText : "",
+                    ReturnType = GetReturnType(item.ReturnType.ToString())
                 });
             }
             return cSharpMethods;
         }
-        public string GetPropertyType(string property) {
-            if (!string.IsNullOrEmpty(property))
-            {
-                if (property.Contains("<"))
-                {
-                    var propertyTemp = String.Join("", property.Substring(property.IndexOf("<") + 1).Reverse());
-                    property= String.Join("", propertyTemp.Substring(propertyTemp.IndexOf(">") + 1).Reverse());
-                }
-            }
-            return property;
-        }
-        private string GetReturnType(string type) {
+        
+        private string GetReturnType(string type)
+        {
             //string returnType = string.Empty;
             if (type.Contains("Task<"))
             {
                 string returnTypeTemp = String.Join("", type.Substring(type.IndexOf("<") + 1).Reverse());
-                string returnType= String.Join("", returnTypeTemp.Substring(returnTypeTemp.IndexOf(">")+1).Reverse());
+                string returnType = String.Join("", returnTypeTemp.Substring(returnTypeTemp.IndexOf(">") + 1).Reverse());
                 return returnType;
             }
             if (type.Contains("Task"))
@@ -83,7 +78,8 @@ namespace VuePageCodeGenerator.CSharpCodeHelper
                              .FirstOrDefault();
             return method;
         }
-        public List<CSharpProperty> GetAllCSharpPropertys() {
+        public List<CSharpProperty> GetAllCSharpPropertys()
+        {
             List<CSharpProperty> cSharpProperties = new List<CSharpProperty>();
             var propertys = GetAllPropertys();
             foreach (var item in propertys)
@@ -103,7 +99,7 @@ namespace VuePageCodeGenerator.CSharpCodeHelper
             var root = syntaxTree.GetRoot();
             var propertys = root.DescendantNodes()
                                .OfType<PropertyDeclarationSyntax>().ToList();
-                               
+
             return propertys;
         }
         public AccessorDeclarationSyntax GetPropertyGetter(string propertyName)

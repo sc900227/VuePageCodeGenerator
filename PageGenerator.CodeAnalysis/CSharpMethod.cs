@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VuePageCodeGenerator.CSharpCodeHelper
+namespace PageGenerator.CodeAnalysis
 {
     public class CSharpMethod
     {
@@ -17,7 +16,7 @@ namespace VuePageCodeGenerator.CSharpCodeHelper
         /// 返回类型
         /// </summary>
         public string ReturnType { get; set; }
-        
+
         /// <summary>
         /// 参数类型
         /// </summary>

@@ -15,9 +15,10 @@ using Microsoft.CSharp;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VuePageCodeGenerator.AssemblyHelper;
-using VuePageCodeGenerator.CSharpCodeHelper;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using PageGenerator;
+using PageGenerator.CodeAnalysis;
 
 namespace VuePageCodeGenerator
 {
@@ -137,28 +138,29 @@ namespace VuePageCodeGenerator
                 //IEnumerable<ProjectItem> projects = GetSelectedProject();
                 //ProjectItem project = projects.FirstOrDefault();
                 //var pro=project.ContainingProject.ProjectItems;
-                Project project = getActiveProject();
+                Project project = ProjectTool.GetActiveProject();
+                string itemPath = ProjectTool.GetSelectedItemPaths().FirstOrDefault();
+                string solutionPath= ProjectTool.GetSolutionFolderPath();
+
+                CSharpCodeAnalysis codeAnalysis = new CSharpCodeAnalysis(itemPath);
+                var methods = codeAnalysis.GetAllCSharpMethods();
+                var propertys = codeAnalysis.GetAllCSharpPropertys();
                 
-
-                //List<string> names = new List<string>();
-                //foreach (var item in project)
-                //{
-                //    names.Add(item.);
-                //}
-
+                MainWindow mainWindow = new MainWindow(methods, solutionPath);
+                mainWindow.Show();
 
                 #region Test
-                string strFile = @"D:\SPA.PhoneBook-master\SPA.PhoneBook-master\src\aspnet-core\src\SPACore.PhoneBook.Application\PhoneBooks\Persons\PersonAppServices.cs";
-                string strCS = @"D:\SPA.PhoneBook-master\SPA.PhoneBook-master\src\aspnet-core\src\SPACore.PhoneBook.Core\PhoneBooks\Persons\Person.cs";
-                string content = string.Empty;
-                using (FileStream stream = new FileStream(strFile, FileMode.Open,FileAccess.Read))
-                {
-                    StreamReader reader = new StreamReader(stream, Encoding.Default);
-                    content=reader.ReadToEnd();
-                }
-                var syntaxTree = CSharpSyntaxTree.ParseText(@content);
-                var root = syntaxTree.GetRoot();
-                var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
+                //string strFile = @"D:\SPA.PhoneBook-master\SPA.PhoneBook-master\src\aspnet-core\src\SPACore.PhoneBook.Application\PhoneBooks\Persons\PersonAppServices.cs";
+                //string strCS = @"D:\SPA.PhoneBook-master\SPA.PhoneBook-master\src\aspnet-core\src\SPACore.PhoneBook.Core\PhoneBooks\Persons\Person.cs";
+                //string content = string.Empty;
+                //using (FileStream stream = new FileStream(strFile, FileMode.Open,FileAccess.Read))
+                //{
+                //    StreamReader reader = new StreamReader(stream, Encoding.Default);
+                //    content=reader.ReadToEnd();
+                //}
+                //var syntaxTree = CSharpSyntaxTree.ParseText(@content);
+                //var root = syntaxTree.GetRoot();
+                //var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
 
                 //CodeSnippetCompileUnit csu = new CodeSnippetCompileUnit(content);
                 //CodeDomProvider provide = new CSharpCodeProvider();
@@ -188,16 +190,16 @@ namespace VuePageCodeGenerator
                 //var items = pro.LoadProject(project.ContainingProject.FullName);
                 #endregion
 
-                
-                // Show a message box to prove we were here
 
-                VsShellUtilities.ShowMessageBox(
-                    this.ServiceProvider,
-                    message,
-                    title,
-                    OLEMSGICON.OLEMSGICON_INFO,
-                    OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+                // Show a message box to prove we were here
+                
+                //VsShellUtilities.ShowMessageBox(
+                //    this.ServiceProvider,
+                //    message,
+                //    title,
+                //    OLEMSGICON.OLEMSGICON_INFO,
+                //    OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                //    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
             }
             catch (Exception ex)
             {
@@ -213,87 +215,6 @@ namespace VuePageCodeGenerator
             
         }
         
-        /// <summary>
-        /// Gets the Active project
-        /// </summary>
-        /// <returns></returns>
-        public Project getActiveProject()
-        {
-            Array projects = (Array)CodeGeneratorCommandPackage.DTE.ActiveSolutionProjects;
-            if (projects != null && projects.Length > 0)
-            {
-                return projects.GetValue(0) as Project;
-            }
-            projects = (Array)CodeGeneratorCommandPackage.DTE.Solution.SolutionBuild.StartupProjects;
-            if (projects != null && projects.Length >= 1)
-            {
-                return projects.GetValue(0) as Project;
-            }
-            projects = (Array)CodeGeneratorCommandPackage.DTE.Solution.Projects;
-            if (projects != null && projects.Length > 0)
-            {
-                return projects.GetValue(0) as Project;
-            }
-            return null;
-        }
-        public static IEnumerable<ProjectItem> GetSelectedProject(DTE2 dte = null)
-        {
-            var items = (Array)CodeGeneratorCommandPackage.DTE.ToolWindows.SolutionExplorer.SelectedItems;
-            
-            foreach (UIHierarchyItem selItem in items)
-            {
-                var item = selItem.Object as ProjectItem;
-
-                if (item != null && item.Properties != null)
-                    yield return item;
-            }
-        }
-        //<summary>Gets the full paths to the currently selected item(s) in the Solution Explorer.</summary>
-        public static IEnumerable<string> GetSelectedItemPaths(DTE2 dte = null)
-        {
-            var items = (Array)CodeGeneratorCommandPackage.DTE.ToolWindows.SolutionExplorer.SelectedItems;
-            foreach (UIHierarchyItem selItem in items)
-            {
-                var item = selItem.Object as ProjectItem;
-
-                if (item != null && item.Properties != null)
-                    yield return item.Properties.Item("FullPath").Value.ToString();
-            }
-        }
-        ///<summary>Gets the paths to all files included in the selection, including files within selected folders.</summary>
-        public static IEnumerable<string> GetSelectedFilePaths()
-        {
-            return GetSelectedItemPaths()
-                .SelectMany(p => Directory.Exists(p)
-                                 ? Directory.EnumerateFiles(p, "*", SearchOption.AllDirectories)
-                                 : new[] { p }
-                           );
-        }
-
-        ///<summary>Gets the the currently selected project(s) in the Solution Explorer.</summary>
-        public static IEnumerable<Project> GetSelectedProjects()
-        {
-            var items = (Array)CodeGeneratorCommandPackage.DTE.ToolWindows.SolutionExplorer.SelectedItems;
-            foreach (UIHierarchyItem selItem in items)
-            {
-                var item = selItem.Object as Project;
-
-                if (item != null)
-                    yield return item;
-            }
-        }
-        ///<summary>Gets the directory containing the active solution file.</summary>
-        public static string GetSolutionFolderPath()
-        {
-            EnvDTE.Solution solution = CodeGeneratorCommandPackage.DTE.Solution;
-
-            if (solution == null)
-                return null;
-
-            //if (string.IsNullOrEmpty(solution.FullName))
-            //    return GetRootFolder();
-
-            return Path.GetDirectoryName(solution.FullName);
-        }
+        
     }
 }

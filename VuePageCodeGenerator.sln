@@ -5,6 +5,12 @@ VisualStudioVersion = 15.0.27428.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VuePageCodeGenerator", "VuePageCodeGenerator\VuePageCodeGenerator.csproj", "{615A293C-659D-4B7B-A70E-E52719B1243A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PageGenerator", "PageGenerator\PageGenerator.csproj", "{1059EB10-9938-4C5E-8E63-33D7B5F25309}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{47B8F138-F5B3-48CE-B909-DBF5070B7BC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PageGenerator.CodeAnalysis", "PageGenerator.CodeAnalysis\PageGenerator.CodeAnalysis.csproj", "{69C987D6-177E-4454-89B8-BAAFFBA70C4A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +21,14 @@ Global
 		{615A293C-659D-4B7B-A70E-E52719B1243A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{615A293C-659D-4B7B-A70E-E52719B1243A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{615A293C-659D-4B7B-A70E-E52719B1243A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1059EB10-9938-4C5E-8E63-33D7B5F25309}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1059EB10-9938-4C5E-8E63-33D7B5F25309}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1059EB10-9938-4C5E-8E63-33D7B5F25309}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1059EB10-9938-4C5E-8E63-33D7B5F25309}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69C987D6-177E-4454-89B8-BAAFFBA70C4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69C987D6-177E-4454-89B8-BAAFFBA70C4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69C987D6-177E-4454-89B8-BAAFFBA70C4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69C987D6-177E-4454-89B8-BAAFFBA70C4A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

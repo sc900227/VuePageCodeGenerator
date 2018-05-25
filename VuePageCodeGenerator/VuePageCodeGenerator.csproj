@@ -59,13 +59,12 @@
     <Compile Include="AssemblyHelper\AssemblyResult.cs" />
     <Compile Include="CodeGeneratorCommand.cs" />
     <Compile Include="CodeGeneratorCommandPackage.cs" />
-    <Compile Include="CSharpCodeHelper\CSharpCodeAnalysis.cs" />
-    <Compile Include="CSharpCodeHelper\CSharpMethod.cs" />
     <Compile Include="ProjectPropertiesToolWindow.cs" />
     <Compile Include="ProjectPropertiesToolWindowCommand.cs" />
     <Compile Include="ProjectPropertiesToolWindowControl.xaml.cs">
       <DependentUpon>ProjectPropertiesToolWindowControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ProjectTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -322,7 +321,16 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\PageGenerator.CodeAnalysis\PageGenerator.CodeAnalysis.csproj">
+      <Project>{69C987D6-177E-4454-89B8-BAAFFBA70C4A}</Project>
+      <Name>PageGenerator.CodeAnalysis</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PageGenerator\PageGenerator.csproj">
+      <Project>{1059eb10-9938-4c5e-8e63-33d7b5f25309}</Project>
+      <Name>PageGenerator</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="..\packages\Microsoft.VisualStudio.SDK.EmbedInteropTypes.15.0.10\build\Microsoft.VisualStudio.SDK.EmbedInteropTypes.targets" Condition="Exists('..\packages\Microsoft.VisualStudio.SDK.EmbedInteropTypes.15.0.10\build\Microsoft.VisualStudio.SDK.EmbedInteropTypes.targets')" />
