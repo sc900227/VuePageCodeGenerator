@@ -113,6 +113,10 @@
       <Project>{69C987D6-177E-4454-89B8-BAAFFBA70C4A}</Project>
       <Name>PageGenerator.CodeAnalysis</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PageGenerator.PageCreate\PageGenerator.PageCreate.csproj">
+      <Project>{C14C6826-6F42-400F-A77D-7FE581F9BB6E}</Project>
+      <Name>PageGenerator.PageCreate</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

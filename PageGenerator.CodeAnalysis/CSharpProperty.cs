@@ -16,5 +16,9 @@ namespace PageGenerator.CodeAnalysis
         /// 属性类型
         /// </summary>
         public string PropertyType { get; set; }
+        /// <summary>
+        /// 描述
+        /// </summary>
+        public string Description { get; set; }
     }
 }

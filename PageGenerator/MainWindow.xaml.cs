@@ -1,5 +1,6 @@
 ﻿
 using PageGenerator.CodeAnalysis;
+using PageGenerator.PageCreate.VuePage;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,6 +19,7 @@ using System.Windows.Shapes;
 
 namespace PageGenerator
 {
+    
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
@@ -25,10 +27,22 @@ namespace PageGenerator
     {
         private List<CSharpMethod> _cSharpMethods;
         private string _solutionPath;
-        public MainWindow(List<CSharpMethod> cSharpMethods,string solutionPath)
+        private string _itemProjectPath;
+        private List<CSharpProperty> formPropertys;
+        private List<CSharpProperty> columnPropertys;
+        private List<CSharpProperty> updatePropertys;
+        private List<CSharpProperty> deletePropertys;
+        public enum MethodType
+        {
+            Return,
+            Parameter
+        }
+
+        public MainWindow(List<CSharpMethod> cSharpMethods,string solutionPath,string itemProjectPath)
         {
             _cSharpMethods = cSharpMethods;
             _solutionPath = solutionPath;
+            _itemProjectPath = itemProjectPath;
             InitializeComponent();
             BindCrudCbx();
 
@@ -47,26 +61,45 @@ namespace PageGenerator
             
         }
         private void BindCrudDg() {
-            var selectMethod = _cSharpMethods.Where(a => a.MethodName == cbxSelect.Text).FirstOrDefault();
-            if (selectMethod==null)
+            
+            columnPropertys= BindDg(dgSelect, cbxSelect.Text,MethodType.Return);
+            formPropertys=BindDg(dgInsert, cbxInsert.Text, MethodType.Parameter);
+            updatePropertys=BindDg(dgUpdate, cbxUpdate.Text, MethodType.Parameter);
+            deletePropertys=BindDg(dgDelete, cbxDelete.Text, MethodType.Parameter);
+        }
+        private List<CSharpProperty> BindDg(DataGrid dataGrid,string methodName, MethodType csType) {
+            var selectMethod = _cSharpMethods.Where(a => a.MethodName == methodName).FirstOrDefault();
+            if (selectMethod == null)
             {
-                return;
+                throw new Exception("No Find Method");
             }
-            var selectReturnType = GetPropertyType(selectMethod.ReturnType);
-            var csPath = SearchFileInSolution(selectReturnType + ".cs");
+            string className = string.Empty;
+            if (csType == MethodType.Return)
+            {
+                className = GetPropertyType(selectMethod.ReturnType);
+            }
+            else if (csType== MethodType.Parameter)
+            {
+                className = GetPropertyType(selectMethod.ParameterType);
+            }
+            List<CSharpProperty> propertys = null;
+            var csPath = CSharpCodeAnalysis.SearchFileInSolution(_itemProjectPath, className + ".cs");
             if (!string.IsNullOrEmpty(csPath))
             {
                 CSharpCodeAnalysis codeAnalysis = new CSharpCodeAnalysis(csPath);
-                List<CSharpProperty> propertys=codeAnalysis.GetAllCSharpPropertys();
+                propertys = codeAnalysis.GetAllCSharpPropertys();
                 foreach (var item in propertys)
                 {
-                    this.dgSelect.Columns.Add(new DataGridTextColumn() { Header = item.PropertyName});
+                    dataGrid.Columns.Add(new DataGridTextColumn() { Header = item.PropertyName });
                 }
                 
             }
-            
+            else
+            {
+                dataGrid.Columns.Add(new DataGridTextColumn() { Header = className});
+            }
+            return propertys;
         }
-
         public string GetPropertyType(string property)
         {
             if (!string.IsNullOrEmpty(property))
@@ -79,24 +112,20 @@ namespace PageGenerator
             }
             return property;
         }
-        public string SearchFileInSolution(string fileName)
-        {
-            string[] filePath = Directory.GetFiles(_solutionPath, fileName, SearchOption.AllDirectories);
-            if (filePath != null && filePath.Length > 0)
-            {
-                return filePath.FirstOrDefault();
-            }
-            else
-            {
-                return null;
-            }
-        }
-
+        
         private void btnConfirm_Click(object sender, RoutedEventArgs e)
         {
             BindCrudDg();
+            tbTitle.Text = txtTitle.Text;
             g1.Visibility = Visibility.Collapsed;
             g2.Visibility = Visibility.Visible;
+        }
+
+        private void btnCreate_Click(object sender, RoutedEventArgs e)
+        {
+            VueCreateOption option = new VueCreateOption(_solutionPath,tbTitle.Text);
+            VuePageGenerate pageGenerate = new VuePageGenerate(option);
+            pageGenerate.VueTablePageCreate(formPropertys, columnPropertys);
         }
     }
 }

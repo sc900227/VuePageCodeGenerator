@@ -19,6 +19,9 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PageGenerator;
 using PageGenerator.CodeAnalysis;
+using PageGenerator.PageCreate.VuePage;
+using System.Net.Http;
+using System.Web;
 
 namespace VuePageCodeGenerator
 {
@@ -141,12 +144,16 @@ namespace VuePageCodeGenerator
                 Project project = ProjectTool.GetActiveProject();
                 string itemPath = ProjectTool.GetSelectedItemPaths().FirstOrDefault();
                 string solutionPath= ProjectTool.GetSolutionFolderPath();
-
+                string itemProjectPath = itemPath.Substring(0, itemPath.LastIndexOf("\\"));
                 CSharpCodeAnalysis codeAnalysis = new CSharpCodeAnalysis(itemPath);
                 var methods = codeAnalysis.GetAllCSharpMethods();
                 var propertys = codeAnalysis.GetAllCSharpPropertys();
+
+                //VueCreateOption vueCreateOption = new VueCreateOption(solutionPath,"");
                 
-                MainWindow mainWindow = new MainWindow(methods, solutionPath);
+                //VuePageGenerate pageGenerate = new VuePageGenerate(vueCreateOption);
+                //pageGenerate.FirstCreate();
+                MainWindow mainWindow = new MainWindow(methods, solutionPath, itemProjectPath);
                 mainWindow.Show();
 
                 #region Test

@@ -16,6 +16,18 @@ namespace PageGenerator.CodeAnalysis
         {
             _strFilePath = strFilePath;
         }
+        public static string SearchFileInSolution(string solutionPath, string fileName)
+        {
+            string[] filePath = Directory.GetFiles(solutionPath, fileName, SearchOption.AllDirectories);
+            if (filePath != null && filePath.Length > 0)
+            {
+                return filePath.FirstOrDefault();
+            }
+            else
+            {
+                return null;
+            }
+        }
         private string GetContent()
         {
             string content = string.Empty;
@@ -42,7 +54,18 @@ namespace PageGenerator.CodeAnalysis
             }
             return cSharpMethods;
         }
-        
+        public string RemovePropertyChar(string property,string strChar1,string strChar2)
+        {
+            if (!string.IsNullOrEmpty(property))
+            {
+                if (property.Contains(strChar1))
+                {
+                    var propertyTemp = String.Join("", property.Substring(property.IndexOf(strChar1) + 1).Reverse());
+                    property = String.Join("", propertyTemp.Substring(propertyTemp.IndexOf(strChar2) + 1).Reverse());
+                }
+            }
+            return property;
+        }
         private string GetReturnType(string type)
         {
             //string returnType = string.Empty;
@@ -82,15 +105,35 @@ namespace PageGenerator.CodeAnalysis
         {
             List<CSharpProperty> cSharpProperties = new List<CSharpProperty>();
             var propertys = GetAllPropertys();
-            foreach (var item in propertys)
+            try
             {
-                cSharpProperties.Add(new CSharpProperty()
+                foreach (var item in propertys)
                 {
-                    PropertyName = item.Identifier.ValueText,
-                    PropertyType = item.Type.ToString()
-                });
+                    var attrs = item.AddAttributeLists().AttributeLists;
+                    var des = "";
+                    if (attrs != null && attrs.Count > 0)
+                    {
+                        var attr = attrs.Where(a => a.ToString().Contains("Description"));
+                        if (attr != null)
+                            des = attr.FirstOrDefault().ToString();
+                    }
+                    des = RemovePropertyChar(des, "(", ")").Replace("\\", "");
+
+                    cSharpProperties.Add(new CSharpProperty()
+                    {
+                        PropertyName = item.Identifier.ValueText,
+                        PropertyType = item.Type.ToString(),
+                        Description = des
+                    });
+                }
+                return cSharpProperties;
             }
-            return cSharpProperties;
+            catch (Exception ex)
+            {
+                
+                throw ex;
+            }
+            
         }
         public List<PropertyDeclarationSyntax> GetAllPropertys()
         {

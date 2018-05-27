@@ -234,6 +234,7 @@
       <HintPath>..\packages\System.Linq.Expressions.4.3.0\lib\net463\System.Linq.Expressions.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Reflection">
       <HintPath>..\packages\System.Reflection.4.3.0\lib\net462\System.Reflection.dll</HintPath>
@@ -281,6 +282,7 @@
       <HintPath>..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
@@ -325,6 +327,10 @@
     <ProjectReference Include="..\PageGenerator.CodeAnalysis\PageGenerator.CodeAnalysis.csproj">
       <Project>{69C987D6-177E-4454-89B8-BAAFFBA70C4A}</Project>
       <Name>PageGenerator.CodeAnalysis</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PageGenerator.PageCreate\PageGenerator.PageCreate.csproj">
+      <Project>{C14C6826-6F42-400F-A77D-7FE581F9BB6E}</Project>
+      <Name>PageGenerator.PageCreate</Name>
     </ProjectReference>
     <ProjectReference Include="..\PageGenerator\PageGenerator.csproj">
       <Project>{1059eb10-9938-4c5e-8e63-33d7b5f25309}</Project>

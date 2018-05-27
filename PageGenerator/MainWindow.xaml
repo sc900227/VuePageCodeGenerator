@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PageGenerator"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="500">
+        Title="MainWindow" Height="350" Width="800">
     <StackPanel>
-        <Grid Name="g1">
+        <Grid Name="g1" Visibility="Visible">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"></RowDefinition>
                 <RowDefinition Height="50"></RowDefinition>
@@ -17,20 +17,20 @@
                 <RowDefinition Height="50"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50*"></ColumnDefinition>
+                <ColumnDefinition Width="80"></ColumnDefinition>
                 <ColumnDefinition Width="200*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Grid.Row="0" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">模块名称:</Label>
-            <TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="30"></TextBox>
+            <TextBox Name="txtTitle" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" Width="200" Height="30"></TextBox>
             <Label Grid.Column="0" Grid.Row="1" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">查询:</Label>
-            <ComboBox Name="cbxSelect" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="30"></ComboBox>
+            <ComboBox Name="cbxSelect" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" Width="200" Height="30"></ComboBox>
             <Label Grid.Column="0" Grid.Row="2" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">新增:</Label>
-            <ComboBox Name="cbxInsert" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="30"></ComboBox>
+            <ComboBox Name="cbxInsert" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" Width="200" Height="30"></ComboBox>
             <Label Grid.Column="0" Grid.Row="3" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">修改:</Label>
-            <ComboBox Name="cbxUpdate" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="30"></ComboBox>
+            <ComboBox Name="cbxUpdate" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" Width="200" Height="30"></ComboBox>
             <Label Grid.Column="0" Grid.Row="4" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">删除:</Label>
-            <ComboBox Name="cbxDelete" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="30"></ComboBox>
-            <Button Name="btnConfirm" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="5" Width="50" Height="30" Click="btnConfirm_Click">确定</Button>
+            <ComboBox Name="cbxDelete" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" Width="200" Height="30"></ComboBox>
+            <Button Name="btnConfirm" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="5" HorizontalAlignment="Left" Margin="100,0,0,0" Width="50" Height="30" Click="btnConfirm_Click">确定</Button>
         </Grid>
         <Grid Name="g2" Visibility="Collapsed">
             <Grid.RowDefinitions>
@@ -46,16 +46,16 @@
                 <ColumnDefinition Width="200*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Grid.Row="0" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">模块名称:</Label>
-            <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="30"></TextBlock>
-            <Label Grid.Column="0" Grid.Row="1" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">查询:</Label>
-            <DataGrid Name="dgSelect" Grid.Column="1" Grid.Row="1"></DataGrid>
-            <Label Grid.Column="0" Grid.Row="2" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">新增:</Label>
-            <DataGrid Grid.Column="1" Grid.Row="2"></DataGrid>
-            <Label Grid.Column="0" Grid.Row="3" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">修改:</Label>
-            <DataGrid Grid.Column="1" Grid.Row="3"></DataGrid>
-            <Label Grid.Column="0" Grid.Row="4" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">删除:</Label>
-            <DataGrid Grid.Column="1" Grid.Row="4"></DataGrid>
-            <Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="5" Width="50" Height="30">生成</Button>
+            <TextBlock Name="tbTitle" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" Width="200" Height="30"></TextBlock>
+            <Label Grid.Column="0" Grid.Row="1" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">查询结果:</Label>
+            <DataGrid Name="dgSelect" Grid.Column="1" Grid.Row="1" Width="auto" Height="30" HorizontalAlignment="Left" Margin="20,0,0,0"></DataGrid>
+            <Label Grid.Column="0" Grid.Row="2" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">新增参数:</Label>
+            <DataGrid Name="dgInsert" Grid.Column="1" Grid.Row="2" Width="auto" Height="30" HorizontalAlignment="Left" Margin="20,0,0,0"></DataGrid>
+            <Label Grid.Column="0" Grid.Row="3" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">修改参数:</Label>
+            <DataGrid Name="dgUpdate" Grid.Column="1" Grid.Row="3" Width="auto" Height="30" HorizontalAlignment="Left" Margin="20,0,0,0"></DataGrid>
+            <Label Grid.Column="0" Grid.Row="4" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">删除参数:</Label>
+            <DataGrid Name="dgDelete" Grid.Column="1" Grid.Row="4" Width="auto" Height="30" HorizontalAlignment="Left" Margin="20,0,0,0"></DataGrid>
+            <Button Name="btnCreate" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="5" Width="50" Height="30" Click="btnCreate_Click">生成</Button>
         </Grid>
     </StackPanel>
     
