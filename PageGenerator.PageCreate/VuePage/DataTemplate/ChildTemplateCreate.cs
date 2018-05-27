@@ -12,13 +12,15 @@ namespace PageGenerator.PageCreate.VuePage.DataTemplate
     {
         private List<CSharpProperty> formPropertys;
         private List<CSharpProperty> columnPropertys;
-        public ChildTemplateCreate(List<CSharpProperty> _formPropertys, List<CSharpProperty> _columnPropertys) {
+        private string templateTitle = string.Empty;
+        public ChildTemplateCreate(string _templateTitle,List<CSharpProperty> _formPropertys, List<CSharpProperty> _columnPropertys) {
             if (_formPropertys == null || _formPropertys.Count <= 0)
                 throw new Exception("propertys is null");
             formPropertys = _formPropertys;
             if (_formPropertys == null || _formPropertys.Count <= 0)
                 throw new Exception("propertys is null");
             columnPropertys = _columnPropertys;
+            templateTitle = _templateTitle;
         }
         /*
          * <Form slot="modal-content" ref="crudItem"
@@ -35,8 +37,19 @@ namespace PageGenerator.PageCreate.VuePage.DataTemplate
                       </FormItem>
                   </Form>
          */
-        
-        public string CreateFormTemplate() {
+        public string CreateTemplate() {
+            string formData = CreateFormTemplate();
+            string columnData = CreateColumsTemplate();
+            string validateData = CreateValidateTemplate();
+            string content = "";
+            content = content.Replace("$Title$", templateTitle);
+            content = content.Replace("$FormItem$", formData);
+            content = content.Replace("$Columns$", columnData);
+            content = content.Replace("$RuleValidate$", validateData);
+            return content;
+
+        }
+        public virtual string CreateFormTemplate() {
             
             StringBuilder formData = new StringBuilder();
             foreach (var item in formPropertys)
@@ -65,7 +78,7 @@ namespace PageGenerator.PageCreate.VuePage.DataTemplate
                    handle:['edit', 'delete']
                }
            ]*/
-        public string CreateColumsTemplate() {
+        public virtual string CreateColumsTemplate() {
             List<Columns> columns = new List<Columns>();
             foreach (var item in columnPropertys)
             {
@@ -96,7 +109,7 @@ namespace PageGenerator.PageCreate.VuePage.DataTemplate
                 ]
             }
          */
-        public string CreateValidateTemplate() {
+        public virtual string CreateValidateTemplate() {
             List<RuleValidate> validates = new List<RuleValidate>();
             StringBuilder valData = new StringBuilder();
             foreach (var item in formPropertys)

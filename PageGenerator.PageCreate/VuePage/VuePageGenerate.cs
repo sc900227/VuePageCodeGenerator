@@ -45,38 +45,21 @@ namespace PageGenerator.PageCreate.VuePage
             PageCreate(_option);
         }
         public void VueTablePageCreate(List<CSharpProperty> formPropertys, List<CSharpProperty> columPropertys) {
-            ChildTemplateCreate create = new ChildTemplateCreate(formPropertys,columPropertys);
-            string formData = create.CreateFormTemplate();
-            string columnData = create.CreateColumsTemplate();
-            string validateData = create.CreateValidateTemplate();
+            ChildTemplateCreate create = new ChildTemplateCreate(_option.PageTitle,formPropertys,columPropertys);
+            //string formData = create.CreateFormTemplate();
+            //string columnData = create.CreateColumsTemplate();
+            //string validateData = create.CreateValidateTemplate();
+            
             VuePageCreate("vuePage", "vuePage", (con) =>
             {
-                con = con.Replace("$Title$", _option.PageTitle);
-                con = con.Replace("$FormItem$", formData);
-                con = con.Replace("$Columns$", columnData);
-                con = con.Replace("$RuleValidate$", validateData);
-                return con;
+                return create.CreateTemplate();
+                //con = con.Replace("$Title$", _option.PageTitle);
+                //con = con.Replace("$FormItem$", formData);
+                //con = con.Replace("$Columns$", columnData);
+                //con = con.Replace("$RuleValidate$", validateData);
+                //return con;
             });
-            //string templateUrl = CSharpCodeAnalysis.SearchFileInSolution(_option.SolutionPath, "vuePageTemplate.vue");// "/VuePageTemplate/crudTable.vue";
-            //if (string.IsNullOrEmpty(templateUrl))
-            //{
-            //    throw new Exception("No Find Vue Template!");
-            //}
-            //string content = string.Empty;
-            //using (FileStream stream = new FileStream(_option.TemplateUrl, FileMode.Open, FileAccess.Read))
-            //{
-            //    StreamReader reader = new StreamReader(stream, Encoding.UTF8);
-            //    content = reader.ReadToEnd();
-                
-            //}
-            //_option.TemplateUrl = templateUrl;
-            //content = content.Replace("$Title$",_option.PageTitle);
-            //content = content.Replace("$FormItem$", formData);
-            //content = content.Replace("$Columns$", columnData);
-            //content = content.Replace("$RuleValidate$",validateData);
-            //_option.VueTemplateData = content;
-            //_option.SavePath = @"F:\Source\Repos\VuePageCodeGenerator\vuePage.vue";
-            //CreatePage(_option);
+            
 
         }
     }
