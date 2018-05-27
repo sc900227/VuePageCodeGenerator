@@ -55,7 +55,7 @@ namespace PageGenerator.PageCreate.VuePage.DataTemplate
             foreach (var item in formPropertys)
             {
                 if (item.PropertyType == "string") {
-                    formData.Append($"<FormItem label='{item.Description}' prop='{item.PropertyName}'><Input v-model='crudItem.{item.PropertyName}' placeholder = ''></Input></FormItem> ");
+                    formData.Append($"<FormItem label='{item.Description}' prop='{item.PropertyName}'><Input v-model='crudItem.{item.PropertyName}' placeholder=''></Input></FormItem>");
                 }
             }
             return formData.ToString();
