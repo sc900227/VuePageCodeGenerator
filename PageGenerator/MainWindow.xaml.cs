@@ -83,6 +83,7 @@ namespace PageGenerator
             {
                 throw new Exception("No Finded Method");
             }
+            
             string className = string.Empty;
             if (csType == MethodType.Return)
             {
@@ -100,12 +101,38 @@ namespace PageGenerator
             if (!string.IsNullOrEmpty(csPath))
             {
                 CSharpCodeAnalysis codeAnalysis = new CSharpCodeAnalysis(csPath);
-                propertys = codeAnalysis.GetAllCSharpPropertys();
-                foreach (var item in propertys)
-                {
-                    dataGrid.Columns.Add(new DataGridTextColumn() { Header = item.PropertyName });
-                }
                 
+                propertys = codeAnalysis.GetAllCSharpPropertys();
+                List<CSharpProperty> abpPropertys = new List<CSharpProperty>();
+                if (className.Contains("CreateOrUpdate"))
+                {
+                    //查找EditDto类
+                    var abpPath = CSharpCodeAnalysis.SearchFileInSolution(_itemProjectPath, propertys.FirstOrDefault().PropertyType + ".cs");
+                    CSharpCodeAnalysis abpCodeAnalysis = new CSharpCodeAnalysis(abpPath);
+                    abpPropertys = abpCodeAnalysis.GetAllCSharpPropertys();
+                    foreach (var item in abpPropertys)
+                    {
+                        dataGrid.Columns.Add(new DataGridTextColumn() { Header = item.PropertyName });
+                    }
+                    return abpPropertys;
+                }
+                else
+                {
+                    //查找IEnumerable集合类
+                    var listPropertyType = propertys.FirstOrDefault(a => a.PropertyType.Contains("IEnumerable"));
+                    if (listPropertyType != null) {
+                        var listPath = CSharpCodeAnalysis.SearchFileInSolution(_solutionPath, GetPropertyType(listPropertyType.PropertyType) + ".cs");
+                        CSharpCodeAnalysis listCodeAnalysis = new CSharpCodeAnalysis(listPath);
+                        var listPropertys = listCodeAnalysis.GetAllCSharpPropertys();
+                        //追加到属性
+                        propertys.AddRange(listPropertys);
+                    }
+                    foreach (var item in propertys)
+                    {
+                        dataGrid.Columns.Add(new DataGridTextColumn() { Header = item.PropertyName });
+                    }
+                    return propertys;
+                }
             }
             else
             {

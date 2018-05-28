@@ -15,6 +15,10 @@ namespace PageGenerator.PageCreate.VuePage
             //if (!Directory.Exists(createOption.SavePath)) {
             //    Directory.CreateDirectory(createOption.SavePath);
             //}
+            if (File.Exists(createOption.SavePath))
+            {
+                File.Delete(createOption.SavePath);
+            }
             using (StreamWriter sw = new StreamWriter(createOption.SavePath,false))
             {
                 sw.Write(createOption.TemplateData);

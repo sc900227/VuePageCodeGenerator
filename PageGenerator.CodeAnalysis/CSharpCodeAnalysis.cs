@@ -113,9 +113,9 @@ namespace PageGenerator.CodeAnalysis
                     var des = "";
                     if (attrs != null && attrs.Count > 0)
                     {
-                        var attr = attrs.Where(a => a.ToString().Contains("Description"));
+                        var attr = attrs.Where(a => a.ToString().Contains("Description")).FirstOrDefault();
                         if (attr != null)
-                            des = attr.FirstOrDefault().ToString();
+                            des = attr.ToString();
                     }
                     des = RemovePropertyChar(des, "(", ")").Replace("\\", "");
 
