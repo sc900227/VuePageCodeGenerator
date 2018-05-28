@@ -115,6 +115,7 @@ namespace PageGenerator
                         dataGrid.Columns.Add(new DataGridTextColumn() { Header = item.PropertyName });
                     }
                     return abpPropertys;
+
                 }
                 else
                 {
