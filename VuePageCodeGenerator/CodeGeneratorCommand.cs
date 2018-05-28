@@ -85,7 +85,7 @@ namespace VuePageCodeGenerator
                     object value;
                     hierarchy.GetProperty(projectItemId, (int)__VSHPROPID.VSHPROPID_Name, out value);
 
-                    if (value != null && value.ToString().EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
+                    if (value != null && value.ToString().EndsWith("AppService.cs", StringComparison.OrdinalIgnoreCase))
                     {
                         menuCommand.Visible = true;
                     }
@@ -144,7 +144,11 @@ namespace VuePageCodeGenerator
                 Project project = ProjectTool.GetActiveProject();
                 string itemPath = ProjectTool.GetSelectedItemPaths().FirstOrDefault();
                 string solutionPath= ProjectTool.GetSolutionFolderPath();
-                string itemProjectPath = itemPath.Substring(0, itemPath.LastIndexOf("\\"));
+                if (!itemPath.Contains("AppService.cs"))
+                {
+                    throw new Exception("请选择应用服务类生成Page!");
+                }
+                
                 CSharpCodeAnalysis codeAnalysis = new CSharpCodeAnalysis(itemPath);
                 var methods = codeAnalysis.GetAllCSharpMethods();
                 var propertys = codeAnalysis.GetAllCSharpPropertys();
@@ -153,7 +157,7 @@ namespace VuePageCodeGenerator
                 
                 //VuePageGenerate pageGenerate = new VuePageGenerate(vueCreateOption);
                 //pageGenerate.FirstCreate();
-                MainWindow mainWindow = new MainWindow(methods, solutionPath, itemProjectPath);
+                MainWindow mainWindow = new MainWindow(methods, solutionPath, itemPath);
                 mainWindow.Show();
 
                 #region Test

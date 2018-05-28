@@ -13,7 +13,9 @@ namespace PageGenerator.PageCreate.VuePage.DataTemplate
         private List<CSharpProperty> formPropertys;
         private List<CSharpProperty> columnPropertys;
         private string templateTitle = string.Empty;
-        public ChildTemplateCreate(string _templateTitle,List<CSharpProperty> _formPropertys, List<CSharpProperty> _columnPropertys) {
+        private Dictionary<string, string> apiFuns;
+        private string requestUrl = string.Empty;
+        public ChildTemplateCreate(string _templateTitle,List<CSharpProperty> _formPropertys, List<CSharpProperty> _columnPropertys, Dictionary<string, string> _apiFuns,string url) {
             if (_formPropertys == null || _formPropertys.Count <= 0)
                 throw new Exception("propertys is null");
             formPropertys = _formPropertys;
@@ -21,6 +23,8 @@ namespace PageGenerator.PageCreate.VuePage.DataTemplate
                 throw new Exception("propertys is null");
             columnPropertys = _columnPropertys;
             templateTitle = _templateTitle;
+            apiFuns = _apiFuns;
+            requestUrl = url;
         }
         /*
          * <Form slot="modal-content" ref="crudItem"
@@ -37,15 +41,23 @@ namespace PageGenerator.PageCreate.VuePage.DataTemplate
                       </FormItem>
                   </Form>
          */
-        public string CreateTemplate() {
+        public string CreateTemplate(string content) {
             string formData = CreateFormTemplate();
             string columnData = CreateColumsTemplate();
             string validateData = CreateValidateTemplate();
-            string content = "";
+            string crudItem= CreateCrudItem();
+            string param= CreateParams();
             content = content.Replace("$Title$", templateTitle);
+            content = content.Replace("$Url$", requestUrl);
             content = content.Replace("$FormItem$", formData);
             content = content.Replace("$Columns$", columnData);
             content = content.Replace("$RuleValidate$", validateData);
+            content = content.Replace("$CrudItem$", crudItem);
+            content = content.Replace("$Params$", param);
+            content = content.Replace("$Select$", apiFuns["Select"]);
+            content = content.Replace("$Insert$", apiFuns["Insert"]);
+            content = content.Replace("$Update$", apiFuns["Update"]);
+            content = content.Replace("$Delete$", apiFuns["Delete"]);
             return content;
 
         }
@@ -80,24 +92,21 @@ namespace PageGenerator.PageCreate.VuePage.DataTemplate
            ]*/
         public virtual string CreateColumsTemplate() {
             List<Columns> columns = new List<Columns>();
+            StringBuilder colData = new StringBuilder();
             foreach (var item in columnPropertys)
             {
-                columns.Add(new Columns()
+                var colItem = new Columns()
                 {
-                    title=item.Description,
-                    key=item.PropertyName,
-                    sortable= "custom",
-                     handle=""
-                });
+                    title = item.Description,
+                    key = item.PropertyName,
+                    sortable = "custom",
+                    handle = ""
+                };
+                colData.Append($"{JsonConvert.SerializeObject(colItem)},");
+                
             }
-            columns.Add(new Columns()
-            {
-                title= "操作",
-                key= "action",
-                sortable="",
-                handle= "['edit', 'delete']"
-            });
-            return JsonConvert.SerializeObject(columns);
+            colData.Append("{ title: '操作',key: 'action',handle:['edit', 'delete']}");
+            return $"[{colData.ToString()}]";
         }
         /*
          * {
@@ -110,7 +119,6 @@ namespace PageGenerator.PageCreate.VuePage.DataTemplate
             }
          */
         public virtual string CreateValidateTemplate() {
-            List<RuleValidate> validates = new List<RuleValidate>();
             StringBuilder valData = new StringBuilder();
             foreach (var item in formPropertys)
             {
@@ -122,6 +130,47 @@ namespace PageGenerator.PageCreate.VuePage.DataTemplate
                 valData.Append($"{item.PropertyName}:[{JsonConvert.SerializeObject(valItem)}],");
             }
             string result = valData.ToString().Substring(0, valData.Length - 1);
+            return result;
+        }
+        /*
+         {
+        Id: null,
+        ReagentName: null,
+        ForDrug: null
+      }
+         */
+        public virtual string CreateCrudItem() {
+            StringBuilder itemData = new StringBuilder();
+            var propertyId = formPropertys.Where(a => a.PropertyName == "ID");
+            if (propertyId == null|| propertyId.Count()<=0) {
+                itemData.Append("Id:null,");
+            }
+            foreach (var item in formPropertys)
+            {
+                itemData.Append($"{item.PropertyName}:null,");
+            }
+            string result = itemData.ToString().Substring(0, itemData.Length - 1);
+            return result;
+        }
+        /*
+         {
+        ID: vm.crudItem.Id,
+        ReagentName: vm.crudItem.ReagentName,
+        ForDrug: vm.crudItem.ForDrug
+      }
+         */
+        public virtual string CreateParams() {
+            StringBuilder paramsData = new StringBuilder();
+            var propertyId = formPropertys.Where(a => a.PropertyName == "ID");
+            if (propertyId == null || propertyId.Count() <= 0)
+            {
+                paramsData.Append($"ID:vm.crudItem.Id,");
+            }
+            foreach (var item in formPropertys)
+            {
+                paramsData.Append($"{item.PropertyName}:vm.crudItem.{item.PropertyName},");
+            }
+            string result = paramsData.ToString().Substring(0, paramsData.Length - 1);
             return result;
         }
     }

@@ -5,7 +5,7 @@
     <div>
       <Card>
         <p slot="title">
-          <Icon type="help-buoy"></Icon>基因管理
+          <Icon type="help-buoy"></Icon>$Title$
         </p>
             <crud-table :table-data="tableData" :columns="columns" :total="total" :page-option="pageOption"
                           :on-ok="handleOk" 
@@ -18,24 +18,7 @@
                   <Form slot="modal-content" ref="crudItem"
                         :model="crudItem" 
                         :rules="ruleValidate" label-position="right" :label-width="100">
-                        <FormItem label='"基因名称"' prop='GeneName'>
-                            <Input v-model='crudItem.GeneName' placeholder = ''></Input>
-                        </FormItem>
-                        <FormItem label='"检测方法"' prop='TestMethod'>
-                            <Input v-model='crudItem.TestMethod' placeholder = ''></Input>
-                        </FormItem> 
-                        <FormItem label='"基因型野生"' prop='GeneTypeW'>
-                            <Input v-model='crudItem.GeneTypeW' placeholder = ''></Input>
-                            </FormItem> 
-                        <FormItem label='"基因型杂合"' prop='GeneTypeH'>
-                            <Input v-model='crudItem.GeneTypeH' placeholder = ''></Input>
-                        </FormItem> 
-                        <FormItem label='"基因型突变"' prop='GeneTypeM'>
-                            <Input v-model='crudItem.GeneTypeM' placeholder = ''></Input>
-                        </FormItem> 
-                        <FormItem label='"基因型未知"' prop='GeneTypeX'>
-                            <Input v-model='crudItem.GeneTypeX' placeholder = ''></Input>
-                        </FormItem> 
+                        $FormItem$
                   </Form>
                   <Row slot="filter" :gutter="16">
                     <Col span="8">
@@ -60,58 +43,7 @@ export default {
   },
   data() {
     return {
-      columns: [
-        [
-          {
-            title: '"基因名称"',
-            key: "GeneName",
-            sortable: "custom",
-            handle: null
-          },
-          {
-            title: '"检测方法"',
-            key: "TestMethod",
-            sortable: "custom",
-            handle: null
-          },
-          {
-            title: '"基因型野生"',
-            key: "GeneTypeW",
-            sortable: "custom",
-            handle: null
-          },
-          {
-            title: '"基因型杂合"',
-            key: "GeneTypeH",
-            sortable: "custom",
-            handle: null
-          },
-          {
-            title: '"基因型突变"',
-            key: "GeneTypeM",
-            sortable: "custom",
-            handle: null
-          },
-          {
-            title: '"基因型未知"',
-            key: "GeneTypeX",
-            sortable: "custom",
-            handle: null
-          },
-          {
-            title: '"试剂ID"',
-            key: "ReagentID",
-            sortable: "custom",
-            handle: null
-          },
-          {
-            title: "操作",
-            key: "action",
-            sortable: null,
-            handle: "['edit', 'delete']"
-          }
-        ]
-      ],
+      columns: $Columns$,
       tableData: [],
       pageOption: { pageIndex: 1, pageSize: 10 },
       total: 0,
@@ -123,32 +55,10 @@ export default {
         headers: { "Content-Type": "application/json" }
       },
       crudItem: {
-        Id: null,
-        ReagentName: null,
-        ForDrug: null
+        $CrudItem$
       },
       ruleValidate: {
-        GeneName: [
-          { required: true, message: '"基因名称"不能为空！', trigger: "blur" }
-        ],
-        TestMethod: [
-          { required: true, message: '"检测方法"不能为空！', trigger: "blur" }
-        ],
-        GeneTypeW: [
-          { required: true, message: '"基因型野生"不能为空！', trigger: "blur" }
-        ],
-        GeneTypeH: [
-          { required: true, message: '"基因型杂合"不能为空！', trigger: "blur" }
-        ],
-        GeneTypeM: [
-          { required: true, message: '"基因型突变"不能为空！', trigger: "blur" }
-        ],
-        GeneTypeX: [
-          { required: true, message: '"基因型未知"不能为空！', trigger: "blur" }
-        ],
-        ReagentID: [
-          { required: true, message: '"试剂ID"不能为空！', trigger: "blur" }
-        ]
+        $RuleValidate$
       }
     };
   },
@@ -186,7 +96,7 @@ export default {
       };
 
       vm.$http
-        .post(vm.url + "GetReagentInfosPage", params, vm.header)
+        .post(vm.url + "$Select$", params, vm.header)
         .then(response => {
           console.log(response);
           vm.tableData = response.data.Result["Items"];
@@ -209,9 +119,7 @@ export default {
     handleOk() {
       let vm = this;
       let params = {
-        ID: vm.crudItem.Id,
-        ReagentName: vm.crudItem.ReagentName,
-        ForDrug: vm.crudItem.ForDrug
+        $Params$
       };
 
       return new Promise(resolve => {
@@ -221,13 +129,13 @@ export default {
             vm.crudItem.Id = vm.crudItem.Id || undefined;
             if (!vm.crudItem.Id) {
               promise = vm.$http.post(
-                vm.url + "CreateReagentInfo",
+                vm.url + "$Insert$",
                 params,
                 vm.header
               );
             } else {
               promise = vm.$http.post(
-                vm.url + "UpdateReagentInfo",
+                vm.url + "$Update$",
                 params,
                 vm.header
               );
@@ -264,7 +172,7 @@ export default {
     handleDelete(val) {
       let vm = this;
       vm.$http
-        .delete(vm.url + "DeleteReagentInfo?Id=" + val.Id)
+        .delete(vm.url + "$Delete$?Id=" + val.Id)
         .then(() => {
           vm.$Message.success("已成功删除");
           vm.fetchData();

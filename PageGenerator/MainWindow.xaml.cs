@@ -32,6 +32,7 @@ namespace PageGenerator
         private List<CSharpProperty> columnPropertys;
         private List<CSharpProperty> updatePropertys;
         private List<CSharpProperty> deletePropertys;
+        private Dictionary<string, string> ApiFun=new Dictionary<string, string>();
         public enum MethodType
         {
             Return,
@@ -61,29 +62,41 @@ namespace PageGenerator
             
         }
         private void BindCrudDg() {
-            
-            columnPropertys= BindDg(dgSelect, cbxSelect.Text,MethodType.Return);
-            formPropertys=BindDg(dgInsert, cbxInsert.Text, MethodType.Parameter);
-            updatePropertys=BindDg(dgUpdate, cbxUpdate.Text, MethodType.Parameter);
-            deletePropertys=BindDg(dgDelete, cbxDelete.Text, MethodType.Parameter);
+            ApiFun.Clear();
+            dgSelect.Columns.Clear();
+            dgInsert.Columns.Clear();
+            dgUpdate.Columns.Clear();
+            dgDelete.Columns.Clear();
+            ApiFun.Add("Select", cbxSelect.Text);
+            ApiFun.Add("Insert", cbxInsert.Text);
+            ApiFun.Add("Update", cbxUpdate.Text);
+            ApiFun.Add("Delete", cbxDelete.Text);
+            columnPropertys = BindDg(dgSelect,tbSelect, cbxSelect.Text,MethodType.Return);
+            formPropertys=BindDg(dgInsert,tbInsert, cbxInsert.Text, MethodType.Parameter);
+            updatePropertys=BindDg(dgUpdate,tbUpdate, cbxUpdate.Text, MethodType.Parameter);
+            deletePropertys=BindDg(dgDelete,tbDelete, cbxDelete.Text, MethodType.Parameter);
+            tbUrl.Text = "api/services/app/"+_itemProjectPath.Substring(_itemProjectPath.LastIndexOf("\\") + 1).Replace("AppService.cs", "/");
         }
-        private List<CSharpProperty> BindDg(DataGrid dataGrid,string methodName, MethodType csType) {
+        private List<CSharpProperty> BindDg(DataGrid dataGrid,TextBlock textBlock, string methodName, MethodType csType) {
             var selectMethod = _cSharpMethods.Where(a => a.MethodName == methodName).FirstOrDefault();
             if (selectMethod == null)
             {
-                throw new Exception("No Find Method");
+                throw new Exception("No Finded Method");
             }
             string className = string.Empty;
             if (csType == MethodType.Return)
             {
                 className = GetPropertyType(selectMethod.ReturnType);
+                textBlock.Text = $"{className}查询结果:";
             }
             else if (csType== MethodType.Parameter)
             {
                 className = GetPropertyType(selectMethod.ParameterType);
+                textBlock.Text = $"{className}参数:";
             }
             List<CSharpProperty> propertys = null;
-            var csPath = CSharpCodeAnalysis.SearchFileInSolution(_itemProjectPath, className + ".cs");
+            var csPath = CSharpCodeAnalysis.SearchFileInSolution(_itemProjectPath.Substring(0, _itemProjectPath.LastIndexOf("\\")), className + ".cs");
+            
             if (!string.IsNullOrEmpty(csPath))
             {
                 CSharpCodeAnalysis codeAnalysis = new CSharpCodeAnalysis(csPath);
@@ -125,7 +138,13 @@ namespace PageGenerator
         {
             VueCreateOption option = new VueCreateOption(_solutionPath,tbTitle.Text);
             VuePageGenerate pageGenerate = new VuePageGenerate(option);
-            pageGenerate.VueTablePageCreate(formPropertys, columnPropertys);
+            pageGenerate.VueTablePageCreate(formPropertys, columnPropertys,ApiFun,tbUrl.Text);
+        }
+
+        private void btnReturn_Click(object sender, RoutedEventArgs e)
+        {
+            g1.Visibility = Visibility.Visible;
+            g2.Visibility = Visibility.Collapsed;
         }
     }
 }

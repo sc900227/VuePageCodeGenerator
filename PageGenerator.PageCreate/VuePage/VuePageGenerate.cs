@@ -35,24 +35,23 @@ namespace PageGenerator.PageCreate.VuePage
             {
                 StreamReader reader = new StreamReader(stream, Encoding.UTF8);
                 content = reader.ReadToEnd();
-
             }
             
             if (createFun != null)
                 content = createFun(content);
             _option.TemplateData = content;
-            _option.SavePath = @"F:\Source\Repos\"+saveName;
+            _option.SavePath =Path.Combine(_option.SolutionPath,saveName);
             PageCreate(_option);
         }
-        public void VueTablePageCreate(List<CSharpProperty> formPropertys, List<CSharpProperty> columPropertys) {
-            ChildTemplateCreate create = new ChildTemplateCreate(_option.PageTitle,formPropertys,columPropertys);
+        public void VueTablePageCreate(List<CSharpProperty> formPropertys, List<CSharpProperty> columPropertys,Dictionary<string,string> apiFuns,string url) {
+            ChildTemplateCreate create = new ChildTemplateCreate(_option.PageTitle,formPropertys,columPropertys,apiFuns,url);
             //string formData = create.CreateFormTemplate();
             //string columnData = create.CreateColumsTemplate();
             //string validateData = create.CreateValidateTemplate();
             
             VuePageCreate("vuePage", "vuePage", (con) =>
             {
-                return create.CreateTemplate();
+                return create.CreateTemplate(con);
                 //con = con.Replace("$Title$", _option.PageTitle);
                 //con = con.Replace("$FormItem$", formData);
                 //con = con.Replace("$Columns$", columnData);

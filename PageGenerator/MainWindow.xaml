@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PageGenerator"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="800">
+        Title="MainWindow" Height="400" Width="800">
     <StackPanel>
         <Grid Name="g1" Visibility="Visible">
             <Grid.RowDefinitions>
@@ -40,22 +40,26 @@
                 <RowDefinition Height="50"></RowDefinition>
                 <RowDefinition Height="50"></RowDefinition>
                 <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="50"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="50*"></ColumnDefinition>
                 <ColumnDefinition Width="200*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Grid.Row="0" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">模块名称:</Label>
+            <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="模块名称:"></TextBlock>
             <TextBlock Name="tbTitle" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" Width="200" Height="30"></TextBlock>
-            <Label Grid.Column="0" Grid.Row="1" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">查询结果:</Label>
-            <DataGrid Name="dgSelect" Grid.Column="1" Grid.Row="1" Width="auto" Height="30" HorizontalAlignment="Left" Margin="20,0,0,0"></DataGrid>
-            <Label Grid.Column="0" Grid.Row="2" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">新增参数:</Label>
-            <DataGrid Name="dgInsert" Grid.Column="1" Grid.Row="2" Width="auto" Height="30" HorizontalAlignment="Left" Margin="20,0,0,0"></DataGrid>
-            <Label Grid.Column="0" Grid.Row="3" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">修改参数:</Label>
-            <DataGrid Name="dgUpdate" Grid.Column="1" Grid.Row="3" Width="auto" Height="30" HorizontalAlignment="Left" Margin="20,0,0,0"></DataGrid>
-            <Label Grid.Column="0" Grid.Row="4" HorizontalContentAlignment="Right" VerticalContentAlignment="Center">删除参数:</Label>
-            <DataGrid Name="dgDelete" Grid.Column="1" Grid.Row="4" Width="auto" Height="30" HorizontalAlignment="Left" Margin="20,0,0,0"></DataGrid>
-            <Button Name="btnCreate" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="5" Width="50" Height="30" Click="btnCreate_Click">生成</Button>
+            <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Text="请求地址:"></TextBlock>
+            <TextBlock Name="tbUrl" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" Width="200" Height="30"></TextBlock>
+            <TextBlock Name="tbSelect" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Text="查询结果:"></TextBlock>
+            <DataGrid Name="dgSelect" Grid.Column="1" Grid.Row="2" Width="auto" Height="30" HorizontalAlignment="Left" Margin="20,0,0,0"></DataGrid>
+            <TextBlock Name="tbInsert" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center" Text="新增参数:"></TextBlock>
+            <DataGrid Name="dgInsert" Grid.Column="1" Grid.Row="3" Width="auto" Height="30" HorizontalAlignment="Left" Margin="20,0,0,0"></DataGrid>
+            <TextBlock Name="tbUpdate" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center" Text="修改参数:"></TextBlock>
+            <DataGrid Name="dgUpdate" Grid.Column="1" Grid.Row="4" Width="auto" Height="30" HorizontalAlignment="Left" Margin="20,0,0,0"></DataGrid>
+            <TextBlock Name="tbDelete" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center" Text="删除参数:"></TextBlock>
+            <DataGrid Name="dgDelete" Grid.Column="1" Grid.Row="5" Width="auto" Height="30" HorizontalAlignment="Left" Margin="20,0,0,0"></DataGrid>
+            <Button Name="btnReturn" Grid.Column="1" Margin="50,0,0,0" HorizontalAlignment="Left" Grid.Row="6" Width="50" Height="30" Content="返回" Click="btnReturn_Click"></Button>
+            <Button Name="btnCreate" Grid.Column="1" Grid.Row="6" Margin="200,0,0,0" HorizontalAlignment="Left" Width="50" Height="30" Content="生成" Click="btnCreate_Click"></Button>
         </Grid>
     </StackPanel>
     
