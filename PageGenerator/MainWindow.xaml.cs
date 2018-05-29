@@ -169,7 +169,8 @@ namespace PageGenerator
         private void btnCreate_Click(object sender, RoutedEventArgs e)
         {
             VueCreateOption option = new VueCreateOption(_solutionPath,tbTitle.Text);
-            VuePageGenerate pageGenerate = new VuePageGenerate(option);
+            VuePageGenerate pageGenerate1 = new VuePageGenerate(option);
+            VuePageGenerate pageGenerate2 = new VuePageGenerate(option);
             if (cbxRouter.IsChecked==true)
             {
                 RouterItem routerItem = new RouterItem()
@@ -180,10 +181,17 @@ namespace PageGenerator
                     icon = "document-text",
                     component = string.Format("() => import('@/views/{0}/{1}.vue')", tbPageName.Text, tbPageName.Text)
                 };
-                pageGenerate.CreateRouter(routerItem);
+                Task.Run(() =>
+                {
+                    pageGenerate1.CreateRouter(routerItem);
+                });
+                
                 
             }
-            pageGenerate.VueTablePageCreate(formPropertys, columnPropertys, ApiFun, tbUrl.Text, tbPageName.Text);
+            Task.Run(()=>
+            {
+                pageGenerate2.VueTablePageCreate(formPropertys, columnPropertys, ApiFun, tbUrl.Text, tbPageName.Text);
+            });
            
             
         }
