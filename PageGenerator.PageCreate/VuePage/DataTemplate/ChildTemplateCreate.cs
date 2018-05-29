@@ -15,7 +15,8 @@ namespace PageGenerator.PageCreate.VuePage.DataTemplate
         private string templateTitle = string.Empty;
         private Dictionary<string, string> apiFuns;
         private string requestUrl = string.Empty;
-        public ChildTemplateCreate(string _templateTitle,List<CSharpProperty> _formPropertys, List<CSharpProperty> _columnPropertys, Dictionary<string, string> _apiFuns,string url) {
+        private string pageName = string.Empty;
+        public ChildTemplateCreate(string _templateTitle,List<CSharpProperty> _formPropertys, List<CSharpProperty> _columnPropertys, Dictionary<string, string> _apiFuns,string url,string _pageName) {
             if (_formPropertys == null || _formPropertys.Count <= 0)
                 throw new Exception("propertys is null");
             formPropertys = _formPropertys;
@@ -25,6 +26,7 @@ namespace PageGenerator.PageCreate.VuePage.DataTemplate
             templateTitle = _templateTitle;
             apiFuns = _apiFuns;
             requestUrl = url;
+            pageName = _pageName;
         }
         /*
          * <Form slot="modal-content" ref="crudItem"
@@ -46,13 +48,16 @@ namespace PageGenerator.PageCreate.VuePage.DataTemplate
             string columnData = CreateColumsTemplate();
             string validateData = CreateValidateTemplate();
             string crudItem= CreateCrudItem();
-            string param= CreateParams();
+            string paramHead = GetCamelCaseProperty(pageName.Replace("InfoPage", ""));
+            string param = CreateParams();
             content = content.Replace("$Title$", templateTitle);
+            content = content.Replace("$PageName$", pageName);
             content = content.Replace("$Url$", requestUrl);
             content = content.Replace("$FormItem$", formData);
             content = content.Replace("$Columns$", columnData);
             content = content.Replace("$RuleValidate$", validateData);
             content = content.Replace("$CrudItem$", crudItem);
+            content = content.Replace("$ParamHead$", paramHead);
             content = content.Replace("$Params$", param);
             content = content.Replace("$Select$", apiFuns["Select"]);
             content = content.Replace("$Insert$", apiFuns["Insert"]);
@@ -91,22 +96,39 @@ namespace PageGenerator.PageCreate.VuePage.DataTemplate
                }
            ]*/
         public virtual string CreateColumsTemplate() {
-            List<Columns> columns = new List<Columns>();
             StringBuilder colData = new StringBuilder();
+            if (columnPropertys.FirstOrDefault(a => a.PropertyName == "Id") == null) {
+                var item = new Columns()
+                {
+                    title="编号",
+                    key="id",
+                    sortable = "custom",
+                    handle = ""
+                };
+                colData.Append($"{JsonConvert.SerializeObject(item)},");
+            }
             foreach (var item in columnPropertys)
             {
                 var colItem = new Columns()
                 {
                     title = item.Description,
-                    key = item.PropertyName,
+                    key = GetCamelCaseProperty(item.PropertyName),
                     sortable = "custom",
                     handle = ""
                 };
                 colData.Append($"{JsonConvert.SerializeObject(colItem)},");
                 
             }
-            colData.Append("{ title: '操作',key: 'action',handle:['edit', 'delete']}");
+            colData.Append("{ 'title': '操作','key': 'action','handle':['edit', 'delete']}");
             return $"[{colData.ToString()}]";
+        }
+        /// <summary>
+        /// 返回驼峰式字符
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public string GetCamelCaseProperty(string property) {
+            return property.Substring(0, 1).ToLower() + property.Substring(1);
         }
         /*
          * {
@@ -141,10 +163,10 @@ namespace PageGenerator.PageCreate.VuePage.DataTemplate
          */
         public virtual string CreateCrudItem() {
             StringBuilder itemData = new StringBuilder();
-            var propertyId = formPropertys.Where(a => a.PropertyName == "ID");
-            if (propertyId == null|| propertyId.Count()<=0) {
-                itemData.Append("Id:null,");
-            }
+            //var propertyId = formPropertys.Where(a => a.PropertyName == "ID");
+            //if (propertyId == null|| propertyId.Count()<=0) {
+            //    itemData.Append("Id:null,");
+            //}
             foreach (var item in formPropertys)
             {
                 itemData.Append($"{item.PropertyName}:null,");
@@ -161,11 +183,11 @@ namespace PageGenerator.PageCreate.VuePage.DataTemplate
          */
         public virtual string CreateParams() {
             StringBuilder paramsData = new StringBuilder();
-            var propertyId = formPropertys.Where(a => a.PropertyName == "ID");
-            if (propertyId == null || propertyId.Count() <= 0)
-            {
-                paramsData.Append($"ID:vm.crudItem.Id,");
-            }
+            //var propertyId = formPropertys.Where(a => a.PropertyName == "ID");
+            //if (propertyId == null || propertyId.Count() <= 0)
+            //{
+            //    paramsData.Append($"ID:vm.crudItem.Id,");
+            //}
             foreach (var item in formPropertys)
             {
                 paramsData.Append($"{item.PropertyName}:vm.crudItem.{item.PropertyName},");

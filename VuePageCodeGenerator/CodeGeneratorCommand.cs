@@ -144,7 +144,7 @@ namespace VuePageCodeGenerator
                 Project project = ProjectTool.GetActiveProject();
                 string itemPath = ProjectTool.GetSelectedItemPaths().FirstOrDefault();
                 string solutionPath= ProjectTool.GetSolutionFolderPath();
-                if (!itemPath.Contains("AppService.cs"))
+                if (!itemPath.Contains("AppServices.cs"))
                 {
                     throw new Exception("请选择应用服务类生成Page!");
                 }

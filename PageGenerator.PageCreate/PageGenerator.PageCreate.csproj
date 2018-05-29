@@ -52,9 +52,11 @@
   <ItemGroup>
     <Compile Include="CreateOption.cs" />
     <Compile Include="IPageGenerate.cs" />
+    <Compile Include="PageContsts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VuePage\DataTemplate\Columns.cs" />
     <Compile Include="VuePage\DataTemplate\ChildTemplateCreate.cs" />
+    <Compile Include="VuePage\DataTemplate\RouterItem.cs" />
     <Compile Include="VuePage\DataTemplate\RuleValidate.cs" />
     <Compile Include="VuePage\VueCreateOption.cs" />
     <Compile Include="VuePage\VuePageCreateBase.cs" />

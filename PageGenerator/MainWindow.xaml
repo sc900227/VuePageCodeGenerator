@@ -43,12 +43,14 @@
                 <RowDefinition Height="50"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50*"></ColumnDefinition>
+                <ColumnDefinition Width="80*"></ColumnDefinition>
                 <ColumnDefinition Width="200*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="模块名称:"></TextBlock>
-            <TextBlock Name="tbTitle" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" Width="200" Height="30"></TextBlock>
+            <TextBox Name="tbTitle" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" Width="200" Height="30"></TextBox>
+            <TextBox Name="tbPageName" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="250,0,0,0" VerticalAlignment="Center" Width="150" Height="30"></TextBox>
             <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Text="请求地址:"></TextBlock>
+            <CheckBox Name="cbxRouter" Grid.Column="1" Grid.Row="0" Margin="420,0,0,0" VerticalAlignment="Center" Content="是否生成页面路由" IsChecked="True"></CheckBox>
             <TextBlock Name="tbUrl" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" Width="200" Height="30"></TextBlock>
             <TextBlock Name="tbSelect" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Text="查询结果:"></TextBlock>
             <DataGrid Name="dgSelect" Grid.Column="1" Grid.Row="2" Width="auto" Height="30" HorizontalAlignment="Left" Margin="20,0,0,0"></DataGrid>

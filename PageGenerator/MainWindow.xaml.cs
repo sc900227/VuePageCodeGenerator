@@ -1,6 +1,7 @@
 ﻿
 using PageGenerator.CodeAnalysis;
 using PageGenerator.PageCreate.VuePage;
+using PageGenerator.PageCreate.VuePage.DataTemplate;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -75,7 +76,8 @@ namespace PageGenerator
             formPropertys=BindDg(dgInsert,tbInsert, cbxInsert.Text, MethodType.Parameter);
             updatePropertys=BindDg(dgUpdate,tbUpdate, cbxUpdate.Text, MethodType.Parameter);
             deletePropertys=BindDg(dgDelete,tbDelete, cbxDelete.Text, MethodType.Parameter);
-            tbUrl.Text = "api/services/app/"+_itemProjectPath.Substring(_itemProjectPath.LastIndexOf("\\") + 1).Replace("AppService.cs", "/");
+            tbUrl.Text = "api/services/app/"+_itemProjectPath.Substring(_itemProjectPath.LastIndexOf("\\") + 1).Replace("AppServices.cs", "/");
+            tbPageName.Text = _itemProjectPath.Substring(_itemProjectPath.LastIndexOf("\\") + 1).Replace("AppServices.cs", "InfoPage");
         }
         private List<CSharpProperty> BindDg(DataGrid dataGrid,TextBlock textBlock, string methodName, MethodType csType) {
             var selectMethod = _cSharpMethods.Where(a => a.MethodName == methodName).FirstOrDefault();
@@ -96,8 +98,9 @@ namespace PageGenerator
                 textBlock.Text = $"{className}参数:";
             }
             List<CSharpProperty> propertys = null;
-            var csPath = CSharpCodeAnalysis.SearchFileInSolution(_itemProjectPath.Substring(0, _itemProjectPath.LastIndexOf("\\")), className + ".cs");
-            
+            var itemPath = _itemProjectPath.Substring(0, _itemProjectPath.LastIndexOf("\\"));
+            var csPath = CSharpCodeAnalysis.SearchFileInSolution(itemPath, className + ".cs");
+            //propertyName = string.Empty;
             if (!string.IsNullOrEmpty(csPath))
             {
                 CSharpCodeAnalysis codeAnalysis = new CSharpCodeAnalysis(csPath);
@@ -107,7 +110,8 @@ namespace PageGenerator
                 if (className.Contains("CreateOrUpdate"))
                 {
                     //查找EditDto类
-                    var abpPath = CSharpCodeAnalysis.SearchFileInSolution(_itemProjectPath, propertys.FirstOrDefault().PropertyType + ".cs");
+                    var abpPath = CSharpCodeAnalysis.SearchFileInSolution(itemPath, propertys.FirstOrDefault().PropertyType + ".cs");
+                    //propertyName = propertys.FirstOrDefault().PropertyName;
                     CSharpCodeAnalysis abpCodeAnalysis = new CSharpCodeAnalysis(abpPath);
                     abpPropertys = abpCodeAnalysis.GetAllCSharpPropertys();
                     foreach (var item in abpPropertys)
@@ -120,14 +124,14 @@ namespace PageGenerator
                 else
                 {
                     //查找IEnumerable集合类
-                    var listPropertyType = propertys.FirstOrDefault(a => a.PropertyType.Contains("IEnumerable"));
-                    if (listPropertyType != null) {
-                        var listPath = CSharpCodeAnalysis.SearchFileInSolution(_solutionPath, GetPropertyType(listPropertyType.PropertyType) + ".cs");
-                        CSharpCodeAnalysis listCodeAnalysis = new CSharpCodeAnalysis(listPath);
-                        var listPropertys = listCodeAnalysis.GetAllCSharpPropertys();
-                        //追加到属性
-                        propertys.AddRange(listPropertys);
-                    }
+                    //var listPropertyType = propertys.FirstOrDefault(a => a.PropertyType.Contains("IEnumerable"));
+                    //if (listPropertyType != null) {
+                    //    var listPath = CSharpCodeAnalysis.SearchFileInSolution(_solutionPath, GetPropertyType(listPropertyType.PropertyType) + ".cs");
+                    //    CSharpCodeAnalysis listCodeAnalysis = new CSharpCodeAnalysis(listPath);
+                    //    var listPropertys = listCodeAnalysis.GetAllCSharpPropertys();
+                    //    //追加到属性
+                    //    propertys.AddRange(listPropertys);
+                    //}
                     foreach (var item in propertys)
                     {
                         dataGrid.Columns.Add(new DataGridTextColumn() { Header = item.PropertyName });
@@ -166,7 +170,22 @@ namespace PageGenerator
         {
             VueCreateOption option = new VueCreateOption(_solutionPath,tbTitle.Text);
             VuePageGenerate pageGenerate = new VuePageGenerate(option);
-            pageGenerate.VueTablePageCreate(formPropertys, columnPropertys,ApiFun,tbUrl.Text);
+            if (cbxRouter.IsChecked==true)
+            {
+                RouterItem routerItem = new RouterItem()
+                {
+                    title = tbTitle.Text,
+                    path = tbPageName.Text,
+                    name = tbPageName.Text,
+                    icon = "document-text",
+                    component = string.Format("() => import('@/views/{0}/{1}.vue')", tbPageName.Text, tbPageName.Text)
+                };
+                pageGenerate.CreateRouter(routerItem);
+                
+            }
+            pageGenerate.VueTablePageCreate(formPropertys, columnPropertys, ApiFun, tbUrl.Text, tbPageName.Text);
+           
+            
         }
 
         private void btnReturn_Click(object sender, RoutedEventArgs e)
