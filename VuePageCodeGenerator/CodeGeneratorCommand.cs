@@ -158,6 +158,8 @@ namespace VuePageCodeGenerator
                 //VuePageGenerate pageGenerate = new VuePageGenerate(vueCreateOption);
                 //pageGenerate.FirstCreate();
                 MainWindow mainWindow = new MainWindow(methods, solutionPath, itemPath);
+                //mainWindow.Owner = this;
+                mainWindow.ShowActivated = true;
                 mainWindow.Show();
 
                 #region Test

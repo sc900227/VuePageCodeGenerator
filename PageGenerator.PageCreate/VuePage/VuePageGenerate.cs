@@ -14,12 +14,22 @@ namespace PageGenerator.PageCreate.VuePage
     public class VuePageGenerate:VuePageCreateBase
     {
         private VueCreateOption _option;
-        public VuePageGenerate(VueCreateOption option) {
+        private string _templatePath;
+        private string _pageSavePath;
+        private string _routerPath;
+        public VuePageGenerate(VueCreateOption option,string templatePath,string pageSavePath,string routerPath) {
             _option = option;
+            _templatePath = templatePath;
+            _pageSavePath = pageSavePath;
+            _routerPath = routerPath;
         }
+        /// <summary>
+        /// 创建页面路由
+        /// </summary>
+        /// <param name="routerItem"></param>
         public void CreateRouter(RouterItem routerItem) {
-            string templateUrl = CSharpCodeAnalysis.SearchFileInSolution(Path.Combine(_option.SolutionPath,PageContsts.VueTemplateDefaultPath), "routerTemplate.js");
-            string routerUrl = CSharpCodeAnalysis.SearchFileInSolution(Path.Combine(_option.SolutionPath, PageContsts.RouterDefaultSavePath), "router.js");
+            string templateUrl = CSharpCodeAnalysis.SearchFileInSolution(_templatePath, "routerTemplate.js");
+            string routerUrl = CSharpCodeAnalysis.SearchFileInSolution(_routerPath, "router.js");
             if (string.IsNullOrEmpty(routerUrl))
             {
                 throw new Exception("Vue router.js No Finded!");
@@ -50,15 +60,24 @@ namespace PageGenerator.PageCreate.VuePage
             _option.SavePath = templateUrl;
             PageCreate(_option);
         }
+        /// <summary>
+        /// 创建vueTable模板
+        /// </summary>
         public void VueTemplateCreate() {
-            //CreateOption option = new VueCreateOption();
-            VuePageCreate("crudTable", PageContsts.VueTemplateDefaultPath, "crudTable");
+           VuePageCreate("crudTable", _pageSavePath, "crudTable");
             
         }
+        /// <summary>
+        /// 创建vue页面
+        /// </summary>
+        /// <param name="templateName">模板名称</param>
+        /// <param name="savePath">vue文件保存地址</param>
+        /// <param name="saveName">vue文件名</param>
+        /// <param name="createFun"></param>
         public void VuePageCreate(string templateName,string savePath,string saveName,Func<string,string> createFun=null) {
             templateName= $"{templateName}Template.vue";
             saveName= $"{saveName}.vue";
-            string templateUrl = CSharpCodeAnalysis.SearchFileInSolution(Path.Combine(_option.SolutionPath,PageContsts.VueTemplateDefaultPath), templateName);
+            string templateUrl = CSharpCodeAnalysis.SearchFileInSolution(_templatePath, templateName);
             if (string.IsNullOrEmpty(templateUrl))
             {
                 throw new Exception("Vue Template No Finded!");
@@ -90,7 +109,7 @@ namespace PageGenerator.PageCreate.VuePage
             //string formData = create.CreateFormTemplate();
             //string columnData = create.CreateColumsTemplate();
             //string validateData = create.CreateValidateTemplate();
-            string savePath= Path.Combine(_option.SolutionPath,PageContsts.PageDefaultSavePath, pageName);
+            string savePath= Path.Combine(_pageSavePath, pageName);
             if (!Directory.Exists(savePath))
                 Directory.CreateDirectory(savePath);
             VuePageCreate("vuePage", savePath, pageName, (con) =>

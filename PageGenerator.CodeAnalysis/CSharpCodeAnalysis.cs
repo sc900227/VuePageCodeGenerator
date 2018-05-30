@@ -18,15 +18,23 @@ namespace PageGenerator.CodeAnalysis
         }
         public static string SearchFileInSolution(string solutionPath, string fileName)
         {
-            string[] filePath = Directory.GetFiles(solutionPath, fileName, SearchOption.AllDirectories);
-            if (filePath != null && filePath.Length > 0)
+            try
             {
-                return filePath.FirstOrDefault();
+                string[] filePath = Directory.GetFiles(solutionPath, fileName, SearchOption.AllDirectories);
+                if (filePath != null && filePath.Length > 0)
+                {
+                    return filePath.FirstOrDefault();
+                }
+                else
+                {
+                    return null;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return null;
+                throw new FileNotFoundException("未搜索到相关文件，请检查目录配置！");
             }
+            
         }
         private string GetContent()
         {

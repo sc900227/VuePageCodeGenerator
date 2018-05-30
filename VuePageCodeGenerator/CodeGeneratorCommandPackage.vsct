@@ -57,7 +57,7 @@
         <Icon guid="guidImages" id="bmpPicArrows" />
         <CommandFlag>DynamicVisibility</CommandFlag>
         <Strings>
-          <ButtonText>Invoke CodeGeneratorCommand</ButtonText>
+          <ButtonText>Vue页面生成器(基于ABP)</ButtonText>
         </Strings>
       </Button>
       <Button guid="guidCodeGeneratorCommandPackageCmdSet" id="cmdidProjectPropertiesToolWindowCommand" priority="0x0100" type="Button">

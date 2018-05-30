@@ -81,11 +81,21 @@
   <ItemGroup>
     <VSCTCompile Include="CodeGeneratorCommandPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
+      <SubType>Designer</SubType>
     </VSCTCompile>
     <Content Include="index.html" />
-    <Content Include="Resources\CodeGeneratorCommand.png" />
-    <Content Include="Resources\CodeGeneratorCommandPackage.ico" />
-    <Content Include="Resources\ProjectPropertiesToolWindowCommand.png" />
+    <Content Include="Resources\CodeGeneratorCommand.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Resources\CodeGeneratorCommandPackage.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Resources\ProjectPropertiesToolWindowCommand.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="stylesheet.css" />
   </ItemGroup>
   <ItemGroup>

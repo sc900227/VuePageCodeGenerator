@@ -1,5 +1,6 @@
 ﻿
 using PageGenerator.CodeAnalysis;
+using PageGenerator.PageCreate;
 using PageGenerator.PageCreate.VuePage;
 using PageGenerator.PageCreate.VuePage.DataTemplate;
 using System;
@@ -47,7 +48,11 @@ namespace PageGenerator
             _itemProjectPath = itemProjectPath;
             InitializeComponent();
             BindCrudCbx();
-
+            tbUrl.Text = "api/services/app/" + _itemProjectPath.Substring(_itemProjectPath.LastIndexOf("\\") + 1).Replace("AppServices.cs", "/");
+            tbPageName.Text = _itemProjectPath.Substring(_itemProjectPath.LastIndexOf("\\") + 1).Replace("AppServices.cs", "InfoPage");
+            txtTemplatePath.Text = System.IO.Path.Combine(_solutionPath,PageContsts.VueTemplateDefaultPath);
+            txtPagePath.Text= System.IO.Path.Combine(_solutionPath, PageContsts.PageDefaultSavePath);
+            txtRouterPath.Text= System.IO.Path.Combine(_solutionPath, PageContsts.RouterDefaultSavePath);
         }
 
         private void BindCrudCbx() {
@@ -76,8 +81,7 @@ namespace PageGenerator
             formPropertys=BindDg(dgInsert,tbInsert, cbxInsert.Text, MethodType.Parameter);
             updatePropertys=BindDg(dgUpdate,tbUpdate, cbxUpdate.Text, MethodType.Parameter);
             deletePropertys=BindDg(dgDelete,tbDelete, cbxDelete.Text, MethodType.Parameter);
-            tbUrl.Text = "api/services/app/"+_itemProjectPath.Substring(_itemProjectPath.LastIndexOf("\\") + 1).Replace("AppServices.cs", "/");
-            tbPageName.Text = _itemProjectPath.Substring(_itemProjectPath.LastIndexOf("\\") + 1).Replace("AppServices.cs", "InfoPage");
+           
         }
         private List<CSharpProperty> BindDg(DataGrid dataGrid,TextBlock textBlock, string methodName, MethodType csType) {
             var selectMethod = _cSharpMethods.Where(a => a.MethodName == methodName).FirstOrDefault();
@@ -169,31 +173,41 @@ namespace PageGenerator
         private void btnCreate_Click(object sender, RoutedEventArgs e)
         {
             VueCreateOption option = new VueCreateOption(_solutionPath,tbTitle.Text);
-            VuePageGenerate pageGenerate1 = new VuePageGenerate(option);
-            VuePageGenerate pageGenerate2 = new VuePageGenerate(option);
-            if (cbxRouter.IsChecked==true)
+            VuePageGenerate pageGenerate1 = new VuePageGenerate(option,txtTemplatePath.Text,txtPagePath.Text,txtRouterPath.Text);
+            VuePageGenerate pageGenerate2 = new VuePageGenerate(option, txtTemplatePath.Text, txtPagePath.Text, txtRouterPath.Text);
+            try
             {
-                RouterItem routerItem = new RouterItem()
+                if (cbxRouter.IsChecked == true)
                 {
-                    title = tbTitle.Text,
-                    path = tbPageName.Text,
-                    name = tbPageName.Text,
-                    icon = "document-text",
-                    component = string.Format("() => import('@/views/{0}/{1}.vue')", tbPageName.Text, tbPageName.Text)
-                };
-                Task.Run(() =>
+                    RouterItem routerItem = new RouterItem()
+                    {
+                        title = tbTitle.Text,
+                        path = tbPageName.Text,
+                        name = tbPageName.Text,
+                        icon = "document-text",
+                        component = string.Format("() => import('@/views/{0}/{1}.vue')", tbPageName.Text, tbPageName.Text)
+                    };
+
+                    Dispatcher.BeginInvoke((Action)delegate () {
+                        pageGenerate1.CreateRouter(routerItem);
+                    });
+
+                }
+                Dispatcher.BeginInvoke((Action)delegate ()
                 {
-                    pageGenerate1.CreateRouter(routerItem);
+                    pageGenerate2.VueTablePageCreate(formPropertys, columnPropertys, ApiFun, tbUrl.Text, tbPageName.Text);
                 });
-                
-                
+               
+                this.Close();
             }
-            Task.Run(()=>
+            catch (Exception ex)
             {
-                pageGenerate2.VueTablePageCreate(formPropertys, columnPropertys, ApiFun, tbUrl.Text, tbPageName.Text);
-            });
-           
+               MessageBox.Show(ex.ToString());
+            }
             
+             
+           
+           
         }
 
         private void btnReturn_Click(object sender, RoutedEventArgs e)
