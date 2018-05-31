@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Windows;
 
 namespace PageGenerator.PageCreate.VuePage
 {
@@ -32,10 +33,12 @@ namespace PageGenerator.PageCreate.VuePage
             string routerUrl = CSharpCodeAnalysis.SearchFileInSolution(_routerPath, "router.js");
             if (string.IsNullOrEmpty(routerUrl))
             {
+                MessageBox.Show("Vue router.js No Finded!");
                 throw new Exception("Vue router.js No Finded!");
             }
             if (string.IsNullOrEmpty(templateUrl))
             {
+                MessageBox.Show("Vue routerTemplate.js No Finded!");
                 throw new Exception("Vue routerTemplate.js No Finded!");
             }
             _option.TemplateUrl = templateUrl;
@@ -63,9 +66,9 @@ namespace PageGenerator.PageCreate.VuePage
         /// <summary>
         /// 创建vueTable模板
         /// </summary>
-        public void VueTemplateCreate() {
-           VuePageCreate("crudTable", _pageSavePath, "crudTable");
-            
+        public string VueTemplateCreate() {
+           string message=VuePageCreate("crudTable", _pageSavePath, "crudTable");
+            return message; 
         }
         /// <summary>
         /// 创建vue页面
@@ -74,12 +77,13 @@ namespace PageGenerator.PageCreate.VuePage
         /// <param name="savePath">vue文件保存地址</param>
         /// <param name="saveName">vue文件名</param>
         /// <param name="createFun"></param>
-        public void VuePageCreate(string templateName,string savePath,string saveName,Func<string,string> createFun=null) {
+        public string VuePageCreate(string templateName,string savePath,string saveName,Func<string,string> createFun=null) {
             templateName= $"{templateName}Template.vue";
             saveName= $"{saveName}.vue";
             string templateUrl = CSharpCodeAnalysis.SearchFileInSolution(_templatePath, templateName);
             if (string.IsNullOrEmpty(templateUrl))
             {
+                MessageBox.Show("Vue Template No Finded!");
                 throw new Exception("Vue Template No Finded!");
             }
             _option.TemplateUrl = templateUrl;
@@ -94,7 +98,14 @@ namespace PageGenerator.PageCreate.VuePage
                 content = createFun(content);
             _option.TemplateData = content;
             _option.SavePath =Path.Combine(savePath, saveName);
-            PageCreate(_option);
+            var result=PageCreate(_option);
+            if (result)
+            {
+                return $"Success! SavePath:{_option.SavePath}";
+            }
+            else {
+                return "Fail!";
+            }
         }
         /// <summary>
         /// 
@@ -104,7 +115,7 @@ namespace PageGenerator.PageCreate.VuePage
         /// <param name="apiFuns">api方法字典</param>
         /// <param name="url">请求地址</param>
         /// <param name="pageName">保存的页面名称</param>
-        public void VueTablePageCreate(List<CSharpProperty> formPropertys, List<CSharpProperty> columPropertys,Dictionary<string,string> apiFuns,string url,string pageName) {
+        public string VueTablePageCreate(List<CSharpProperty> formPropertys, List<CSharpProperty> columPropertys,Dictionary<string,string> apiFuns,string url,string pageName) {
             ChildTemplateCreate create = new ChildTemplateCreate(_option.PageTitle,formPropertys,columPropertys,apiFuns,url, pageName);
             //string formData = create.CreateFormTemplate();
             //string columnData = create.CreateColumsTemplate();
@@ -112,16 +123,11 @@ namespace PageGenerator.PageCreate.VuePage
             string savePath= Path.Combine(_pageSavePath, pageName);
             if (!Directory.Exists(savePath))
                 Directory.CreateDirectory(savePath);
-            VuePageCreate("vuePage", savePath, pageName, (con) =>
+            string message=VuePageCreate("vuePage", savePath, pageName, (con) =>
             {
                 return create.CreateTemplate(con);
-                //con = con.Replace("$Title$", _option.PageTitle);
-                //con = con.Replace("$FormItem$", formData);
-                //con = con.Replace("$Columns$", columnData);
-                //con = con.Replace("$RuleValidate$", validateData);
-                //return con;
             });
-            
+            return message;
 
         }
     }

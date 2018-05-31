@@ -8,6 +8,6 @@ namespace PageGenerator.PageCreate
 {
     public interface IPageGenerate
     {
-        void PageCreate(CreateOption createOption);
+        bool PageCreate(CreateOption createOption);
     }
 }

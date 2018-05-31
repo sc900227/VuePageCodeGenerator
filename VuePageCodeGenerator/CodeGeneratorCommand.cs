@@ -67,6 +67,7 @@ namespace VuePageCodeGenerator
                 menuItem.BeforeQueryStatus += menuItem_BeforeQueryStatus;
                 commandService.AddCommand(menuItem);
             }
+            
         }
         private void menuItem_BeforeQueryStatus(object sender, EventArgs e)
         {
@@ -85,7 +86,7 @@ namespace VuePageCodeGenerator
                     object value;
                     hierarchy.GetProperty(projectItemId, (int)__VSHPROPID.VSHPROPID_Name, out value);
 
-                    if (value != null && value.ToString().EndsWith("AppService.cs", StringComparison.OrdinalIgnoreCase))
+                    if (value != null && value.ToString().EndsWith("AppServices.cs", StringComparison.OrdinalIgnoreCase))
                     {
                         menuCommand.Visible = true;
                     }
@@ -137,82 +138,24 @@ namespace VuePageCodeGenerator
             try
             {
                 string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-                string title = "CodeGeneratorCommand";
-                //IEnumerable<ProjectItem> projects = GetSelectedProject();
-                //ProjectItem project = projects.FirstOrDefault();
-                //var pro=project.ContainingProject.ProjectItems;
                 Project project = ProjectTool.GetActiveProject();
                 string itemPath = ProjectTool.GetSelectedItemPaths().FirstOrDefault();
-                string solutionPath= ProjectTool.GetSolutionFolderPath();
+                string solutionPath = ProjectTool.GetSolutionFolderPath();
                 if (!itemPath.Contains("AppServices.cs"))
                 {
                     throw new Exception("请选择应用服务类生成Page!");
                 }
-                
+
                 CSharpCodeAnalysis codeAnalysis = new CSharpCodeAnalysis(itemPath);
                 var methods = codeAnalysis.GetAllCSharpMethods();
                 var propertys = codeAnalysis.GetAllCSharpPropertys();
 
-                //VueCreateOption vueCreateOption = new VueCreateOption(solutionPath,"");
-                
-                //VuePageGenerate pageGenerate = new VuePageGenerate(vueCreateOption);
-                //pageGenerate.FirstCreate();
+
                 MainWindow mainWindow = new MainWindow(methods, solutionPath, itemPath);
-                //mainWindow.Owner = this;
+
                 mainWindow.ShowActivated = true;
                 mainWindow.Show();
 
-                #region Test
-                //string strFile = @"D:\SPA.PhoneBook-master\SPA.PhoneBook-master\src\aspnet-core\src\SPACore.PhoneBook.Application\PhoneBooks\Persons\PersonAppServices.cs";
-                //string strCS = @"D:\SPA.PhoneBook-master\SPA.PhoneBook-master\src\aspnet-core\src\SPACore.PhoneBook.Core\PhoneBooks\Persons\Person.cs";
-                //string content = string.Empty;
-                //using (FileStream stream = new FileStream(strFile, FileMode.Open,FileAccess.Read))
-                //{
-                //    StreamReader reader = new StreamReader(stream, Encoding.Default);
-                //    content=reader.ReadToEnd();
-                //}
-                //var syntaxTree = CSharpSyntaxTree.ParseText(@content);
-                //var root = syntaxTree.GetRoot();
-                //var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
-
-                //CodeSnippetCompileUnit csu = new CodeSnippetCompileUnit(content);
-                //CodeDomProvider provide = new CSharpCodeProvider();
-                //var result=provide.CompileAssemblyFromDom(new CompilerParameters(), csu);
-                //string strDll = strCS.Substring(0, strCS.LastIndexOf(".")) + ".dll";
-
-                //CodeDomProvider COD = new Microsoft.CSharp.CSharpCodeProvider();
-                //COD = new Microsoft.CSharp.CSharpCodeProvider();
-                //CompilerParameters COM = new CompilerParameters();
-                ////生成DLL，True为生成exe文件,false为生成ＤＬＬ文件
-                //COM.GenerateExecutable = false;
-                //COM.OutputAssembly = strDll;
-                ////把ＣＳ文件生成ＤＬＬ
-                //CompilerResults COMR = COD.CompileAssemblyFromFile(COM, strCS);
-
-                ////下面我们就可以根据生成的Dll反射为相关对象，供我们使用了．
-                //AssemblyHandler assembly = new AssemblyHandler(strCS);
-                //AssemblyResult result=assembly.GetClassInfo("Entitys.TB_GeneInfo");
-                //Assembly a = Assembly.LoadFrom(strDll);
-                //Type t = a.GetType("b");
-                //object obj = Activator.CreateInstance(t);
-                //t.GetMethod("run").Invoke(obj, null);
-                //CodeSnippetCompileUnit code = new CodeSnippetCompileUnit();
-
-                //Assembly assembly =Assembly.LoadFrom(project.ContainingProject.FullName);
-                //Microsoft.Build.Evaluation.ProjectCollection pro = new Microsoft.Build.Evaluation.ProjectCollection();
-                //var items = pro.LoadProject(project.ContainingProject.FullName);
-                #endregion
-
-
-                // Show a message box to prove we were here
-                
-                //VsShellUtilities.ShowMessageBox(
-                //    this.ServiceProvider,
-                //    message,
-                //    title,
-                //    OLEMSGICON.OLEMSGICON_INFO,
-                //    OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                //    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
             }
             catch (Exception ex)
             {
@@ -223,9 +166,20 @@ namespace VuePageCodeGenerator
                     OLEMSGICON.OLEMSGICON_INFO,
                     OLEMSGBUTTON.OLEMSGBUTTON_OK,
                     OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
-              
+
             }
-            
+
+            // Show a message box to prove we were here
+
+            //VsShellUtilities.ShowMessageBox(
+            //    this.ServiceProvider,
+            //    message,
+            //    title,
+            //    OLEMSGICON.OLEMSGICON_INFO,
+            //    OLEMSGBUTTON.OLEMSGBUTTON_OK,
+            //    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+
+
         }
         
         

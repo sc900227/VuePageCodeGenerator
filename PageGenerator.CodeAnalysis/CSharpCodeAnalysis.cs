@@ -32,7 +32,7 @@ namespace PageGenerator.CodeAnalysis
             }
             catch (Exception ex)
             {
-                throw new FileNotFoundException("未搜索到相关文件，请检查目录配置！");
+                return null;
             }
             
         }

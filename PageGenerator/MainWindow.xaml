@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PageGenerator"
         mc:Ignorable="d"
-        Title="MainWindow" Height="400" Width="800">
+        Title="基本信息配置" Height="400" Width="800">
     <StackPanel>
         <Grid Name="g1" Visibility="Visible">
             <Grid.RowDefinitions>

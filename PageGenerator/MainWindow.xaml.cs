@@ -84,10 +84,15 @@ namespace PageGenerator
            
         }
         private List<CSharpProperty> BindDg(DataGrid dataGrid,TextBlock textBlock, string methodName, MethodType csType) {
+            if (string.IsNullOrEmpty(methodName)) {
+                MessageBox.Show("Method is Null!");
+                throw new Exception("Method is Null!");
+            }
             var selectMethod = _cSharpMethods.Where(a => a.MethodName == methodName).FirstOrDefault();
             if (selectMethod == null)
             {
-                throw new Exception("No Finded Method");
+                MessageBox.Show("No Finded Method!");
+                throw new Exception("No Finded Method!");
             }
             
             string className = string.Empty;
@@ -115,7 +120,11 @@ namespace PageGenerator
                 {
                     //查找EditDto类
                     var abpPath = CSharpCodeAnalysis.SearchFileInSolution(itemPath, propertys.FirstOrDefault().PropertyType + ".cs");
-                    //propertyName = propertys.FirstOrDefault().PropertyName;
+
+                    if (string.IsNullOrEmpty(abpPath)) {
+                        MessageBox.Show("No Finded EditDto!");
+                        throw new Exception("No Finded EditDto");
+                    }
                     CSharpCodeAnalysis abpCodeAnalysis = new CSharpCodeAnalysis(abpPath);
                     abpPropertys = abpCodeAnalysis.GetAllCSharpPropertys();
                     foreach (var item in abpPropertys)
@@ -168,6 +177,7 @@ namespace PageGenerator
             tbTitle.Text = txtTitle.Text;
             g1.Visibility = Visibility.Collapsed;
             g2.Visibility = Visibility.Visible;
+           
         }
 
         private void btnCreate_Click(object sender, RoutedEventArgs e)
@@ -193,11 +203,12 @@ namespace PageGenerator
                     });
 
                 }
-                Dispatcher.BeginInvoke((Action)delegate ()
+                var message=Dispatcher.Invoke((Func<string>)delegate ()
                 {
-                    pageGenerate2.VueTablePageCreate(formPropertys, columnPropertys, ApiFun, tbUrl.Text, tbPageName.Text);
+                    return pageGenerate2.VueTablePageCreate(formPropertys, columnPropertys, ApiFun, tbUrl.Text, tbPageName.Text);
+                    
                 });
-               
+                MessageBox.Show(message);
                 this.Close();
             }
             catch (Exception ex)

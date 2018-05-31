@@ -9,17 +9,27 @@ namespace PageGenerator.PageCreate.VuePage
 {
     public class VuePageCreateBase : IPageGenerate
     {
-        public void PageCreate(CreateOption createOption)
+        public bool PageCreate(CreateOption createOption)
         {
-            createOption = createOption as VueCreateOption;
-            if (File.Exists(createOption.SavePath))
+            try
             {
-                File.Delete(createOption.SavePath);
+                createOption = createOption as VueCreateOption;
+                if (File.Exists(createOption.SavePath))
+                {
+                    File.Delete(createOption.SavePath);
+                }
+                using (StreamWriter sw = new StreamWriter(createOption.SavePath, false))
+                {
+                    sw.Write(createOption.TemplateData);
+                }
+                return true;
             }
-            using (StreamWriter sw = new StreamWriter(createOption.SavePath, false))
+            catch (Exception ex)
             {
-                sw.Write(createOption.TemplateData);
+
+                return false;
             }
+            
         }
     }
 
