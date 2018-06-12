@@ -44,7 +44,7 @@ namespace VuePageCodeGenerator
         /// VS Package that provides this command, not null.
         /// </summary>
         private readonly Package package;
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="CodeGeneratorCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)

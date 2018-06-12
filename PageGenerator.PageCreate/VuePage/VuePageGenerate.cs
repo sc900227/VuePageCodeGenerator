@@ -18,19 +18,22 @@ namespace PageGenerator.PageCreate.VuePage
         private string _templatePath;
         private string _pageSavePath;
         private string _routerPath;
+        private ICodeSearch codeSearch;
         public VuePageGenerate(VueCreateOption option,string templatePath,string pageSavePath,string routerPath) {
             _option = option;
             _templatePath = templatePath;
             _pageSavePath = pageSavePath;
             _routerPath = routerPath;
+            AutofacExt.InitAutofac();
+            codeSearch = AutofacExt.GetFromFac<ICodeSearch>();
         }
         /// <summary>
         /// 创建页面路由
         /// </summary>
         /// <param name="routerItem"></param>
         public void CreateRouter(RouterItem routerItem) {
-            string templateUrl = CSharpCodeAnalysis.SearchFileInSolution(_templatePath, "routerTemplate.js");
-            string routerUrl = CSharpCodeAnalysis.SearchFileInSolution(_routerPath, "router.js");
+            string templateUrl = codeSearch.SearchFileInSolution(_templatePath, "routerTemplate.js");
+            string routerUrl = codeSearch.SearchFileInSolution(_routerPath, "router.js");
             if (string.IsNullOrEmpty(routerUrl))
             {
                 MessageBox.Show("Vue router.js No Finded!");
@@ -80,7 +83,7 @@ namespace PageGenerator.PageCreate.VuePage
         public string VuePageCreate(string templateName,string savePath,string saveName,Func<string,string> createFun=null) {
             templateName= $"{templateName}Template.vue";
             saveName= $"{saveName}.vue";
-            string templateUrl = CSharpCodeAnalysis.SearchFileInSolution(_templatePath, templateName);
+            string templateUrl = codeSearch.SearchFileInSolution(_templatePath, templateName);
             if (string.IsNullOrEmpty(templateUrl))
             {
                 MessageBox.Show("Vue Template No Finded!");

@@ -35,6 +35,7 @@ namespace PageGenerator
         private List<CSharpProperty> updatePropertys;
         private List<CSharpProperty> deletePropertys;
         private Dictionary<string, string> ApiFun=new Dictionary<string, string>();
+        private ICodeSearch codeSearch;
         public enum MethodType
         {
             Return,
@@ -53,6 +54,8 @@ namespace PageGenerator
             txtTemplatePath.Text = System.IO.Path.Combine(_solutionPath,PageContsts.VueTemplateDefaultPath);
             txtPagePath.Text= System.IO.Path.Combine(_solutionPath, PageContsts.PageDefaultSavePath);
             txtRouterPath.Text= System.IO.Path.Combine(_solutionPath, PageContsts.RouterDefaultSavePath);
+            AutofacExt.InitAutofac();
+            codeSearch = AutofacExt.GetFromFac<ICodeSearch>();
         }
 
         private void BindCrudCbx() {
@@ -108,18 +111,17 @@ namespace PageGenerator
             }
             List<CSharpProperty> propertys = null;
             var itemPath = _itemProjectPath.Substring(0, _itemProjectPath.LastIndexOf("\\"));
-            var csPath = CSharpCodeAnalysis.SearchFileInSolution(itemPath, className + ".cs");
+            var csPath = codeSearch.SearchFileInSolution(itemPath, className + ".cs");
             //propertyName = string.Empty;
             if (!string.IsNullOrEmpty(csPath))
             {
                 CSharpCodeAnalysis codeAnalysis = new CSharpCodeAnalysis(csPath);
-                
                 propertys = codeAnalysis.GetAllCSharpPropertys();
                 List<CSharpProperty> abpPropertys = new List<CSharpProperty>();
                 if (className.Contains("CreateOrUpdate"))
                 {
                     //查找EditDto类
-                    var abpPath = CSharpCodeAnalysis.SearchFileInSolution(itemPath, propertys.FirstOrDefault().PropertyType + ".cs");
+                    var abpPath = codeSearch.SearchFileInSolution(itemPath, propertys.FirstOrDefault().PropertyType + ".cs");
 
                     if (string.IsNullOrEmpty(abpPath)) {
                         MessageBox.Show("No Finded EditDto!");

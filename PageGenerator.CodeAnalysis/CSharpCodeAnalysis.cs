@@ -12,11 +12,14 @@ namespace PageGenerator.CodeAnalysis
     public class CSharpCodeAnalysis
     {
         private string _strFilePath;
+        private ICodeSearch codeSearch;
         public CSharpCodeAnalysis(string strFilePath)
         {
             _strFilePath = strFilePath;
+            AutofacExt.InitAutofac();
+            codeSearch = AutofacExt.GetFromFac<ICodeSearch>();
         }
-        public static string SearchFileInSolution(string solutionPath, string fileName)
+        public string SearchFileInSolution(string solutionPath, string fileName)
         {
             try
             {
@@ -36,16 +39,16 @@ namespace PageGenerator.CodeAnalysis
             }
             
         }
-        private string GetContent()
-        {
-            string content = string.Empty;
-            using (FileStream stream = new FileStream(_strFilePath, FileMode.Open, FileAccess.Read))
-            {
-                StreamReader reader = new StreamReader(stream, Encoding.Default);
-                content = reader.ReadToEnd();
-            }
-            return content;
-        }
+        //public string GetContent()
+        //{
+        //    string content = string.Empty;
+        //    using (FileStream stream = new FileStream(_strFilePath, FileMode.Open, FileAccess.Read))
+        //    {
+        //        StreamReader reader = new StreamReader(stream, Encoding.Default);
+        //        content = reader.ReadToEnd();
+        //    }
+        //    return content;
+        //}
         public List<CSharpMethod> GetAllCSharpMethods()
         {
             List<CSharpMethod> cSharpMethods = new List<CSharpMethod>();
@@ -62,7 +65,7 @@ namespace PageGenerator.CodeAnalysis
             }
             return cSharpMethods;
         }
-        public string RemovePropertyChar(string property,string strChar1,string strChar2)
+        private string RemovePropertyChar(string property,string strChar1,string strChar2)
         {
             if (!string.IsNullOrEmpty(property))
             {
@@ -91,7 +94,7 @@ namespace PageGenerator.CodeAnalysis
         }
         public List<MethodDeclarationSyntax> GetAllMethods()
         {
-            string txt = GetContent();
+            string txt = codeSearch.GetContent(_strFilePath);
             var syntaxTree = CSharpSyntaxTree.ParseText(@txt);
             var root = syntaxTree.GetRoot();
             var methods = root.DescendantNodes()
@@ -100,7 +103,7 @@ namespace PageGenerator.CodeAnalysis
         }
         public MethodDeclarationSyntax GetMethod(string methodName)
         {
-            string txt = GetContent();
+            string txt = codeSearch.GetContent(_strFilePath);
             var syntaxTree = CSharpSyntaxTree.ParseText(@txt);
             var root = syntaxTree.GetRoot();
             var method = root.DescendantNodes()
@@ -145,7 +148,7 @@ namespace PageGenerator.CodeAnalysis
         }
         public List<PropertyDeclarationSyntax> GetAllPropertys()
         {
-            string txt = GetContent();
+            string txt = codeSearch.GetContent(_strFilePath);
             var syntaxTree = CSharpSyntaxTree.ParseText(@txt);
             var root = syntaxTree.GetRoot();
             var propertys = root.DescendantNodes()
@@ -155,7 +158,7 @@ namespace PageGenerator.CodeAnalysis
         }
         public AccessorDeclarationSyntax GetPropertyGetter(string propertyName)
         {
-            string txt = GetContent();
+            string txt = codeSearch.GetContent(_strFilePath);
             var syntaxTree = CSharpSyntaxTree.ParseText(@txt);
             var root = syntaxTree.GetRoot();
             var property = root.DescendantNodes()
@@ -165,38 +168,6 @@ namespace PageGenerator.CodeAnalysis
             var getter = property.AccessorList.Accessors.First(a => a.Kind() == SyntaxKind.GetAccessorDeclaration);
             return getter;
         }
-        //public List<CSharpMethod> GetAllMethodNames()
-        //{
-        //    List<string> methodNames = new List<string>();
-        //    List<CSharpMethod> methods = new List<CSharpMethod>();
-        //    var strMethodLines = File.ReadAllLines(_strFilePath)
-        //                                .Where(a => (a.Contains("protected") ||
-        //                                            a.Contains("private") ||
-        //                                            a.Contains("public")) &&
-        //                                            !a.Contains("_") && !a.Contains("class"));
-        //    foreach (var item in strMethodLines)
-        //    {
-        //        if (item.IndexOf("(") != -1)
-        //        {
-        //            string strTemp = String.Join("", item.Substring(0, item.IndexOf("(")).Reverse());
-        //            string methodName=String.Join("", strTemp.Substring(0, strTemp.IndexOf(" ")).Reverse());
-        //            string parameterTypeTemp = item.Substring(item.IndexOf("(") + 1);
-        //            string parameterType = String.Join("", parameterTypeTemp.Substring(0, parameterTypeTemp.IndexOf(" ")));
-        //            string returnType = string.Empty;
-        //            if (item.Contains("Task<"))
-        //            {
-        //                string returnTypeTemp= String.Join("", item.Substring(item.IndexOf("<")+1).Reverse());
-        //                returnType= String.Join("", returnTypeTemp.Substring(returnTypeTemp.IndexOf(">")+1).Reverse());
-        //            }
-        //            methods.Add(new CSharpMethod()
-        //            {
-        //                MethodName=methodName,
-        //                ParameterType=parameterType,
-        //                ReturnType=returnType
-        //            });
-        //        }
-        //    }
-        //    return methods.Distinct().ToList();
-        //}
+        
     }
 }
